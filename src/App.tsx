@@ -7,10 +7,11 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
+import OrderHistory from "./pages/OrderHistory";
+import Customers from "./pages/Customers";
 import Dealers from "./pages/Dealers";
-import Sourcing from "./pages/Sourcing";
-import Production from "./pages/Production";
-import Quality from "./pages/Quality";
+import Inventory from "./pages/Inventory";
+import Invoices from "./pages/Invoices";
 import SettingsPage from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -27,10 +28,11 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/order-history" element={<OrderHistory />} />
+            <Route path="/customers" element={<Customers />} />
             <Route path="/dealers" element={<Dealers />} />
-            <Route path="/sourcing" element={<Sourcing />} />
-            <Route path="/production" element={<Production />} />
-            <Route path="/quality" element={<Quality />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/invoices" element={<Invoices />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
