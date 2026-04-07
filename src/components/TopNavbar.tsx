@@ -1,4 +1,4 @@
-import { Search, Bell, LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
