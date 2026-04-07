@@ -11,27 +11,29 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Product {
   id: number;
   name: string;
   category: string;
+  sizes: string;
+  purposes: string;
   price: string;
+  deliveryFee: string;
   stock: number;
   status: string;
-  description: string;
-  deliveryFee: string;
 }
 
 const initialProducts: Product[] = [
-  { id: 1, name: "Biomass Briquettes", category: "Fuel", price: "₹15/kg", stock: 1200, status: "In Stock", description: "High-quality biomass briquettes", deliveryFee: "₹500" },
-  { id: 2, name: "Wood Pellets", category: "Fuel", price: "₹18/kg", stock: 800, status: "In Stock", description: "Premium wood pellets", deliveryFee: "₹600" },
-  { id: 3, name: "Sawdust Blocks", category: "Raw Material", price: "₹8/kg", stock: 50, status: "Low Stock", description: "Compressed sawdust blocks", deliveryFee: "₹300" },
-  { id: 4, name: "Groundnut Shell Pellets", category: "Fuel", price: "₹12/kg", stock: 2000, status: "In Stock", description: "Groundnut shell fuel pellets", deliveryFee: "₹450" },
-  { id: 5, name: "Bagasse Briquettes", category: "Fuel", price: "₹14/kg", stock: 0, status: "Out of Stock", description: "Sugarcane bagasse briquettes", deliveryFee: "₹500" },
+  { id: 1, name: "Biomass Pellets", category: "Pellets", sizes: "10kg, 25kg, 50kg", purposes: "Industrial Heating, Boiler Fuel", price: "₹15/kg", deliveryFee: "₹500", stock: 1200, status: "In Stock" },
+  { id: 2, name: "Biomass Stove", category: "Stove", sizes: "Small, Medium, Large", purposes: "Domestic Cooking, Commercial Cooking", price: "₹3,500", deliveryFee: "₹800", stock: 45, status: "In Stock" },
+  { id: 3, name: "Biomass Burner", category: "Burner", sizes: "50kW, 100kW, 200kW", purposes: "Industrial Heating, Steam Generation, Drying", price: "₹25,000", deliveryFee: "₹2,000", stock: 12, status: "Low Stock" },
+  { id: 4, name: "Wood Pellets", category: "Pellets", sizes: "10kg, 25kg, 50kg, 100kg", purposes: "Boiler Fuel, Power Generation", price: "₹18/kg", deliveryFee: "₹600", stock: 800, status: "In Stock" },
+  { id: 5, name: "Groundnut Shell Pellets", category: "Pellets", sizes: "25kg, 50kg", purposes: "Industrial Heating, Boiler Fuel", price: "₹12/kg", deliveryFee: "₹450", stock: 0, status: "Out of Stock" },
 ];
 
-const emptyProduct = { id: 0, name: "", category: "Fuel", price: "", stock: 0, status: "In Stock", description: "", deliveryFee: "" };
+const emptyProduct: Product = { id: 0, name: "", category: "Pellets", sizes: "", purposes: "", price: "", deliveryFee: "", stock: 0, status: "In Stock" };
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -45,9 +47,11 @@ export default function Products() {
     p.category.toLowerCase().includes(search.toLowerCase())
   );
 
+  const getStatus = (stock: number) => stock > 20 ? "In Stock" : stock > 0 ? "Low Stock" : "Out of Stock";
+
   const handleAdd = () => {
     if (!form.name || !form.price) { toast.error("Name and price are required"); return; }
-    const newProduct = { ...form, id: Date.now(), status: form.stock > 100 ? "In Stock" : form.stock > 0 ? "Low Stock" : "Out of Stock" };
+    const newProduct = { ...form, id: Date.now(), status: getStatus(form.stock) };
     setProducts([...products, newProduct]);
     setForm({ ...emptyProduct });
     setAddOpen(false);
@@ -56,7 +60,7 @@ export default function Products() {
 
   const handleEdit = () => {
     if (!form.name || !form.price) { toast.error("Name and price are required"); return; }
-    const updated = { ...form, status: form.stock > 100 ? "In Stock" : form.stock > 0 ? "Low Stock" : "Out of Stock" };
+    const updated = { ...form, status: getStatus(form.stock) };
     setProducts(products.map(p => p.id === form.id ? updated : p));
     setEditOpen(false);
     toast.success(`Product "${form.name}" updated`);
@@ -67,40 +71,44 @@ export default function Products() {
     toast.success(`Product "${p.name}" deleted`);
   };
 
-  const openEdit = (p: Product) => {
-    setForm({ ...p });
-    setEditOpen(true);
-  };
+  const openEdit = (p: Product) => { setForm({ ...p }); setEditOpen(true); };
 
   const ProductForm = ({ onSubmit, submitLabel }: { onSubmit: () => void; submitLabel: string }) => (
     <div className="space-y-4 py-2">
       <div>
         <label className="text-sm font-medium text-card-foreground">Product Name *</label>
-        <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Biomass Briquettes" className="mt-1" />
-      </div>
-      <div>
-        <label className="text-sm font-medium text-card-foreground">Description</label>
-        <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Product description" className="mt-1" />
+        <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Biomass Pellets" className="mt-1" />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-card-foreground">Category</label>
+          <label className="text-sm font-medium text-card-foreground">Category *</label>
           <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
             <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="Fuel">Fuel</SelectItem>
-              <SelectItem value="Raw Material">Raw Material</SelectItem>
+              <SelectItem value="Pellets">Pellets</SelectItem>
+              <SelectItem value="Stove">Biomass Stove</SelectItem>
+              <SelectItem value="Burner">Biomass Burner</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Price *</label>
-          <Input value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} placeholder="₹15/kg" className="mt-1" />
+          <Input value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} placeholder="₹15/kg or ₹3,500" className="mt-1" />
         </div>
+      </div>
+      <div>
+        <label className="text-sm font-medium text-card-foreground">Available Sizes</label>
+        <Input value={form.sizes} onChange={e => setForm({ ...form, sizes: e.target.value })} placeholder="e.g. 10kg, 25kg, 50kg" className="mt-1" />
+        <p className="text-xs text-muted-foreground mt-1">Comma-separated sizes shown in app</p>
+      </div>
+      <div>
+        <label className="text-sm font-medium text-card-foreground">Purposes</label>
+        <Textarea value={form.purposes} onChange={e => setForm({ ...form, purposes: e.target.value })} placeholder="e.g. Industrial Heating, Boiler Fuel" className="mt-1" rows={2} />
+        <p className="text-xs text-muted-foreground mt-1">Comma-separated purposes users can select</p>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-card-foreground">Stock (kg)</label>
+          <label className="text-sm font-medium text-card-foreground">Stock</label>
           <Input type="number" value={form.stock} onChange={e => setForm({ ...form, stock: Number(e.target.value) })} className="mt-1" />
         </div>
         <div>
@@ -119,8 +127,8 @@ export default function Products() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Storefront</h1>
-          <p className="text-muted-foreground">Manage your product catalog</p>
+          <h1 className="text-2xl font-bold text-foreground">Products</h1>
+          <p className="text-muted-foreground">Manage products shown in mobile app</p>
         </div>
         <Dialog open={addOpen} onOpenChange={v => { setAddOpen(v); if (v) setForm({ ...emptyProduct }); }}>
           <DialogTrigger asChild>
@@ -129,7 +137,7 @@ export default function Products() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Product</DialogTitle>
-              <DialogDescription>Fill in the product details below.</DialogDescription>
+              <DialogDescription>This product will be visible in the mobile app.</DialogDescription>
             </DialogHeader>
             <ProductForm onSubmit={handleAdd} submitLabel="Add Product" />
           </DialogContent>
@@ -159,7 +167,9 @@ export default function Products() {
               <tr className="border-b bg-muted/50">
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Product</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Category</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Price</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Delivery Fee</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Stock</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Status</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
@@ -168,9 +178,14 @@ export default function Products() {
             <tbody>
               {filtered.map((p) => (
                 <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-6 py-4 font-medium text-sm text-card-foreground">{p.name}</td>
+                  <td className="px-6 py-4">
+                    <p className="text-sm font-medium text-card-foreground">{p.name}</p>
+                    <p className="text-xs text-muted-foreground">{p.purposes}</p>
+                  </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{p.category}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.sizes}</td>
                   <td className="px-6 py-4 text-sm font-medium text-card-foreground">{p.price}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.deliveryFee}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{p.stock}</td>
                   <td className="px-6 py-4">
                     <span className={`text-xs px-3 py-1 rounded-full font-medium ${
@@ -188,7 +203,7 @@ export default function Products() {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete "{p.name}"?</AlertDialogTitle>
-                          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                          <AlertDialogDescription>This will remove the product from the mobile app.</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -200,7 +215,7 @@ export default function Products() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
+                <tr><td colSpan={8} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
               )}
             </tbody>
           </table>

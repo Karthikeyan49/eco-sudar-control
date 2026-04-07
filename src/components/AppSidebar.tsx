@@ -4,7 +4,6 @@ import {
   Users,
   ShoppingCart,
   Package,
-  Warehouse,
   FileText,
   History,
   Settings,
@@ -33,7 +32,6 @@ const menuItems = [
   { title: "Order History", url: "/order-history", icon: History },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Dealer Network", url: "/dealers", icon: UserCheck },
-  { title: "Inventory", url: "/inventory", icon: Warehouse },
   { title: "Invoices", url: "/invoices", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
