@@ -7,15 +7,15 @@ import {
 } from "@/components/ui/dialog";
 
 interface Customer {
-  name: string; phone: string; email: string; company: string; address: string; gst: string; orders: number;
+  name: string; phone: string; email: string; orders: number; lastOrder: string;
 }
 
 const customers: Customer[] = [
-  { name: "Green Industries Ltd", phone: "+91 98765 43210", email: "info@greenindustries.com", company: "Green Industries Ltd", address: "Chennai, Tamil Nadu", gst: "33AABCG1234F1Z5", orders: 12 },
-  { name: "EcoHeat Solutions", phone: "+91 87654 32109", email: "contact@ecoheat.in", company: "EcoHeat Solutions Pvt Ltd", address: "Coimbatore, Tamil Nadu", gst: "33AABCE5678H1Z3", orders: 8 },
-  { name: "Biomass Trading Co", phone: "+91 76543 21098", email: "sales@biomasstrading.com", company: "Biomass Trading Co", address: "Madurai, Tamil Nadu", gst: "33AABCB9012K1Z1", orders: 15 },
-  { name: "Rural Energy Hub", phone: "+91 65432 10987", email: "admin@ruralenergy.in", company: "Rural Energy Hub LLP", address: "Salem, Tamil Nadu", gst: "33AABCR3456L1Z9", orders: 5 },
-  { name: "BioFuel Corp", phone: "+91 54321 09876", email: "order@biofuelcorp.com", company: "BioFuel Corporation", address: "Trichy, Tamil Nadu", gst: "33AABCB7890M1Z7", orders: 22 },
+  { name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@greenindustries.com", orders: 12, lastOrder: "2024-03-15" },
+  { name: "Priya Sharma", phone: "+91 87654 32109", email: "priya@ecoheat.in", orders: 8, lastOrder: "2024-03-14" },
+  { name: "Anand Patel", phone: "+91 76543 21098", email: "anand@biomasstrading.com", orders: 15, lastOrder: "2024-03-13" },
+  { name: "Meena Devi", phone: "+91 65432 10987", email: "meena@ruralenergy.in", orders: 5, lastOrder: "2024-03-12" },
+  { name: "Suresh Babu", phone: "+91 54321 09876", email: "suresh@biofuelcorp.com", orders: 22, lastOrder: "2024-03-11" },
 ];
 
 export default function Customers() {
@@ -25,8 +25,8 @@ export default function Customers() {
 
   const filtered = customers.filter(c =>
     c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.company.toLowerCase().includes(search.toLowerCase()) ||
-    c.gst.toLowerCase().includes(search.toLowerCase())
+    c.email.toLowerCase().includes(search.toLowerCase()) ||
+    c.phone.includes(search)
   );
 
   const view = (c: Customer) => { setSelected(c); setOpen(true); };
@@ -34,15 +34,15 @@ export default function Customers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Customer Management</h1>
-        <p className="text-muted-foreground">View and manage customer details</p>
+        <h1 className="text-2xl font-bold text-foreground">Customers</h1>
+        <p className="text-muted-foreground">Users registered via mobile app</p>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
-            <DialogDescription>Full customer information and order summary.</DialogDescription>
+            <DialogDescription>App-registered customer information.</DialogDescription>
           </DialogHeader>
           {selected && (
             <div className="space-y-3 py-2 text-sm">
@@ -50,13 +50,8 @@ export default function Customers() {
                 <div><span className="text-muted-foreground">Name:</span><p className="font-medium text-card-foreground">{selected.name}</p></div>
                 <div><span className="text-muted-foreground">Phone:</span><p className="font-medium text-card-foreground">{selected.phone}</p></div>
                 <div><span className="text-muted-foreground">Email:</span><p className="font-medium text-card-foreground">{selected.email}</p></div>
-                <div><span className="text-muted-foreground">Company:</span><p className="font-medium text-card-foreground">{selected.company}</p></div>
-                <div><span className="text-muted-foreground">Address:</span><p className="font-medium text-card-foreground">{selected.address}</p></div>
-                <div><span className="text-muted-foreground">GSTIN:</span><p className="font-medium text-card-foreground font-mono text-xs">{selected.gst}</p></div>
-              </div>
-              <div className="border-t pt-3">
-                <span className="text-muted-foreground">Total Orders:</span>
-                <p className="font-semibold text-lg text-primary">{selected.orders}</p>
+                <div><span className="text-muted-foreground">Total Orders:</span><p className="font-semibold text-primary">{selected.orders}</p></div>
+                <div><span className="text-muted-foreground">Last Order:</span><p className="font-medium text-card-foreground">{selected.lastOrder}</p></div>
               </div>
             </div>
           )}
@@ -75,25 +70,22 @@ export default function Customers() {
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Customer</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Company</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Location</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">GST</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Name</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Phone</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Email</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Orders</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Last Order</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((c, i) => (
                 <tr key={i} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-6 py-4">
-                    <p className="text-sm font-medium text-card-foreground">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.phone} • {c.email}</p>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.company}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.address}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground font-mono text-xs">{c.gst}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-card-foreground">{c.name}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.phone}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.email}</td>
                   <td className="px-6 py-4 text-sm font-medium text-card-foreground">{c.orders}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.lastOrder}</td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => view(c)} className="p-1.5 hover:bg-muted rounded-lg"><Eye className="h-4 w-4 text-muted-foreground" /></button>
                   </td>
