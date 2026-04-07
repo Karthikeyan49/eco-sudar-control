@@ -1,4 +1,4 @@
-import { Plus, Search, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -11,101 +11,145 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+
+interface SizePrice {
+  size: string;
+  price: string;
+}
 
 interface Product {
   id: number;
-  name: string;
-  category: string;
-  sizes: string;
-  purposes: string;
-  price: string;
+  product: string;
+  sizes: SizePrice[];
+  purposes: string[];
   deliveryFee: string;
   stock: number;
   status: string;
 }
 
+const productTypes = ["Pellets", "Biomass Stove", "Biomass Burner"];
+
 const initialProducts: Product[] = [
-  { id: 1, name: "Biomass Pellets", category: "Pellets", sizes: "10kg, 25kg, 50kg", purposes: "Industrial Heating, Boiler Fuel", price: "₹15/kg", deliveryFee: "₹500", stock: 1200, status: "In Stock" },
-  { id: 2, name: "Biomass Stove", category: "Stove", sizes: "Small, Medium, Large", purposes: "Domestic Cooking, Commercial Cooking", price: "₹3,500", deliveryFee: "₹800", stock: 45, status: "In Stock" },
-  { id: 3, name: "Biomass Burner", category: "Burner", sizes: "50kW, 100kW, 200kW", purposes: "Industrial Heating, Steam Generation, Drying", price: "₹25,000", deliveryFee: "₹2,000", stock: 12, status: "Low Stock" },
-  { id: 4, name: "Wood Pellets", category: "Pellets", sizes: "10kg, 25kg, 50kg, 100kg", purposes: "Boiler Fuel, Power Generation", price: "₹18/kg", deliveryFee: "₹600", stock: 800, status: "In Stock" },
-  { id: 5, name: "Groundnut Shell Pellets", category: "Pellets", sizes: "25kg, 50kg", purposes: "Industrial Heating, Boiler Fuel", price: "₹12/kg", deliveryFee: "₹450", stock: 0, status: "Out of Stock" },
+  { id: 1, product: "Pellets", sizes: [{ size: "6mm", price: "₹8.50/kg" }, { size: "8mm", price: "₹9/kg" }, { size: "10mm", price: "₹10/kg" }], purposes: ["Commercial Kitchen", "Boiler", "Hotel", "Industrial Dryer"], deliveryFee: "₹150", stock: 1200, status: "In Stock" },
+  { id: 2, product: "Biomass Stove", sizes: [{ size: "Small", price: "₹3,500" }, { size: "Medium", price: "₹5,000" }, { size: "Large", price: "₹7,500" }], purposes: ["Domestic Cooking", "Commercial Cooking"], deliveryFee: "₹800", stock: 45, status: "In Stock" },
+  { id: 3, product: "Biomass Burner", sizes: [{ size: "50kW", price: "₹25,000" }, { size: "100kW", price: "₹40,000" }, { size: "200kW", price: "₹60,000" }], purposes: ["Industrial Heating", "Steam Generation", "Drying"], deliveryFee: "₹2,000", stock: 12, status: "Low Stock" },
 ];
 
-const emptyProduct: Product = { id: 0, name: "", category: "Pellets", sizes: "", purposes: "", price: "", deliveryFee: "", stock: 0, status: "In Stock" };
+interface FormState {
+  id: number;
+  product: string;
+  sizes: SizePrice[];
+  purposes: string[];
+  newPurpose: string;
+  deliveryFee: string;
+  stock: number;
+}
+
+const emptyForm: FormState = { id: 0, product: "Pellets", sizes: [{ size: "", price: "" }], purposes: [], newPurpose: "", deliveryFee: "", stock: 0 };
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [form, setForm] = useState<Product>({ ...emptyProduct });
+  const [form, setForm] = useState<FormState>({ ...emptyForm });
 
   const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.category.toLowerCase().includes(search.toLowerCase())
+    p.product.toLowerCase().includes(search.toLowerCase())
   );
 
   const getStatus = (stock: number) => stock > 20 ? "In Stock" : stock > 0 ? "Low Stock" : "Out of Stock";
 
   const handleAdd = () => {
-    if (!form.name || !form.price) { toast.error("Name and price are required"); return; }
-    const newProduct = { ...form, id: Date.now(), status: getStatus(form.stock) };
+    const validSizes = form.sizes.filter(s => s.size && s.price);
+    if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
+    const newProduct: Product = { id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee, stock: form.stock, status: getStatus(form.stock) };
     setProducts([...products, newProduct]);
-    setForm({ ...emptyProduct });
+    setForm({ ...emptyForm });
     setAddOpen(false);
-    toast.success(`Product "${newProduct.name}" added`);
+    toast.success(`Product "${newProduct.product}" added`);
   };
 
   const handleEdit = () => {
-    if (!form.name || !form.price) { toast.error("Name and price are required"); return; }
-    const updated = { ...form, status: getStatus(form.stock) };
+    const validSizes = form.sizes.filter(s => s.size && s.price);
+    if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
+    const updated: Product = { id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee, stock: form.stock, status: getStatus(form.stock) };
     setProducts(products.map(p => p.id === form.id ? updated : p));
     setEditOpen(false);
-    toast.success(`Product "${form.name}" updated`);
+    toast.success(`Product "${form.product}" updated`);
   };
 
   const handleDelete = (p: Product) => {
     setProducts(products.filter(x => x.id !== p.id));
-    toast.success(`Product "${p.name}" deleted`);
+    toast.success(`Product "${p.product}" deleted`);
   };
 
-  const openEdit = (p: Product) => { setForm({ ...p }); setEditOpen(true); };
+  const openEdit = (p: Product) => {
+    setForm({ id: p.id, product: p.product, sizes: [...p.sizes], purposes: [...p.purposes], newPurpose: "", deliveryFee: p.deliveryFee, stock: p.stock });
+    setEditOpen(true);
+  };
+
+  const updateSize = (index: number, field: keyof SizePrice, value: string) => {
+    setForm(f => {
+      const sizes = [...f.sizes];
+      sizes[index] = { ...sizes[index], [field]: value };
+      return { ...f, sizes };
+    });
+  };
+
+  const addSizeRow = () => setForm(f => ({ ...f, sizes: [...f.sizes, { size: "", price: "" }] }));
+  const removeSizeRow = (index: number) => setForm(f => ({ ...f, sizes: f.sizes.filter((_, i) => i !== index) }));
+
+  const addPurpose = () => {
+    if (!form.newPurpose.trim()) return;
+    setForm(f => ({ ...f, purposes: [...f.purposes, f.newPurpose.trim()], newPurpose: "" }));
+  };
+  const removePurpose = (index: number) => setForm(f => ({ ...f, purposes: f.purposes.filter((_, i) => i !== index) }));
 
   const renderForm = (onSubmit: () => void, submitLabel: string) => (
     <div className="space-y-4 py-2">
       <div>
-        <label className="text-sm font-medium text-card-foreground">Product Name *</label>
-        <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Biomass Pellets" className="mt-1" />
+        <label className="text-sm font-medium text-card-foreground">Product *</label>
+        <Select value={form.product} onValueChange={v => setForm(f => ({ ...f, product: v }))}>
+          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {productTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Category *</label>
-          <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
-            <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Pellets">Pellets</SelectItem>
-              <SelectItem value="Stove">Biomass Stove</SelectItem>
-              <SelectItem value="Burner">Biomass Burner</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Price *</label>
-          <Input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="₹15/kg or ₹3,500" className="mt-1" />
-        </div>
-      </div>
+
       <div>
-        <label className="text-sm font-medium text-card-foreground">Available Sizes</label>
-        <Input value={form.sizes} onChange={e => setForm(f => ({ ...f, sizes: e.target.value }))} placeholder="e.g. 10kg, 25kg, 50kg" className="mt-1" />
-        <p className="text-xs text-muted-foreground mt-1">Comma-separated sizes shown in app</p>
+        <label className="text-sm font-medium text-card-foreground">Sizes & Prices *</label>
+        <div className="space-y-2 mt-1">
+          {form.sizes.map((sp, i) => (
+            <div key={i} className="flex gap-2 items-center">
+              <Input placeholder="Size (e.g. 6mm)" value={sp.size} onChange={e => updateSize(i, "size", e.target.value)} className="flex-1" />
+              <Input placeholder="Price (e.g. ₹8.50/kg)" value={sp.price} onChange={e => updateSize(i, "price", e.target.value)} className="flex-1" />
+              {form.sizes.length > 1 && (
+                <button type="button" onClick={() => removeSizeRow(i)} className="p-1.5 hover:bg-destructive/10 rounded-lg"><X className="h-4 w-4 text-destructive" /></button>
+              )}
+            </div>
+          ))}
+        </div>
+        <Button type="button" variant="outline" size="sm" className="mt-2" onClick={addSizeRow}>+ Add Size</Button>
       </div>
+
       <div>
         <label className="text-sm font-medium text-card-foreground">Purposes</label>
-        <Textarea value={form.purposes} onChange={e => setForm(f => ({ ...f, purposes: e.target.value }))} placeholder="e.g. Industrial Heating, Boiler Fuel" className="mt-1" rows={2} />
-        <p className="text-xs text-muted-foreground mt-1">Comma-separated purposes users can select</p>
+        <div className="flex flex-wrap gap-2 mt-1">
+          {form.purposes.map((p, i) => (
+            <span key={i} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full">
+              {p}
+              <button type="button" onClick={() => removePurpose(i)}><X className="h-3 w-3" /></button>
+            </span>
+          ))}
+        </div>
+        <div className="flex gap-2 mt-2">
+          <Input placeholder="e.g. Commercial Kitchen" value={form.newPurpose} onChange={e => setForm(f => ({ ...f, newPurpose: e.target.value }))} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addPurpose(); } }} />
+          <Button type="button" variant="outline" size="sm" onClick={addPurpose}>Add</Button>
+        </div>
       </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-card-foreground">Stock</label>
@@ -113,9 +157,10 @@ export default function Products() {
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
-          <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹500" className="mt-1" />
+          <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹150" className="mt-1" />
         </div>
       </div>
+
       <DialogFooter>
         <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
         <Button onClick={onSubmit}>{submitLabel}</Button>
@@ -130,7 +175,7 @@ export default function Products() {
           <h1 className="text-2xl font-bold text-foreground">Products</h1>
           <p className="text-muted-foreground">Manage products shown in mobile app</p>
         </div>
-        <Dialog open={addOpen} onOpenChange={v => { setAddOpen(v); if (v) setForm({ ...emptyProduct }); }}>
+        <Dialog open={addOpen} onOpenChange={v => { setAddOpen(v); if (v) setForm({ ...emptyForm, sizes: [{ size: "", price: "" }] }); }}>
           <DialogTrigger asChild>
             <Button className="gap-2"><Plus className="h-4 w-4" /> Add Product</Button>
           </DialogTrigger>
@@ -166,9 +211,8 @@ export default function Products() {
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Product</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Category</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Price</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes & Prices</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Purposes</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Delivery Fee</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Stock</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Status</th>
@@ -178,19 +222,29 @@ export default function Products() {
             <tbody>
               {filtered.map((p) => (
                 <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <td className="px-6 py-4 text-sm font-medium text-card-foreground">{p.product}</td>
                   <td className="px-6 py-4">
-                    <p className="text-sm font-medium text-card-foreground">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">{p.purposes}</p>
+                    <div className="space-y-1">
+                      {p.sizes.map((sp, i) => (
+                        <div key={i} className="text-xs text-muted-foreground">
+                          <span className="font-medium text-card-foreground">{sp.size}</span> — {sp.price}
+                        </div>
+                      ))}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.category}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.sizes}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-card-foreground">{p.price}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {p.purposes.map((pu, i) => (
+                        <span key={i} className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{pu}</span>
+                      ))}
+                    </div>
+                  </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{p.deliveryFee}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{p.stock}</td>
                   <td className="px-6 py-4">
                     <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                       p.status === "In Stock" ? "bg-primary/10 text-primary" :
-                      p.status === "Low Stock" ? "bg-yellow-50 text-status-processing" :
+                      p.status === "Low Stock" ? "bg-yellow-50 text-yellow-600" :
                       "bg-destructive/10 text-destructive"
                     }`}>{p.status}</span>
                   </td>
@@ -202,7 +256,7 @@ export default function Products() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete "{p.name}"?</AlertDialogTitle>
+                          <AlertDialogTitle>Delete "{p.product}"?</AlertDialogTitle>
                           <AlertDialogDescription>This will remove the product from the mobile app.</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -215,7 +269,7 @@ export default function Products() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
+                <tr><td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
               )}
             </tbody>
           </table>
