@@ -23,16 +23,14 @@ interface Product {
   sizes: SizePrice[];
   purposes: string[];
   deliveryFee: string;
-  stock: number;
-  status: string;
 }
 
 const productTypes = ["Pellets", "Biomass Stove", "Biomass Burner"];
 
 const initialProducts: Product[] = [
-  { id: 1, product: "Pellets", sizes: [{ size: "6mm", price: "₹8.50/kg" }, { size: "8mm", price: "₹9/kg" }, { size: "10mm", price: "₹10/kg" }], purposes: ["Commercial Kitchen", "Boiler", "Hotel", "Industrial Dryer"], deliveryFee: "₹150", stock: 1200, status: "In Stock" },
-  { id: 2, product: "Biomass Stove", sizes: [{ size: "Small", price: "₹3,500" }, { size: "Medium", price: "₹5,000" }, { size: "Large", price: "₹7,500" }], purposes: ["Domestic Cooking", "Commercial Cooking"], deliveryFee: "₹800", stock: 45, status: "In Stock" },
-  { id: 3, product: "Biomass Burner", sizes: [{ size: "50kW", price: "₹25,000" }, { size: "100kW", price: "₹40,000" }, { size: "200kW", price: "₹60,000" }], purposes: ["Industrial Heating", "Steam Generation", "Drying"], deliveryFee: "₹2,000", stock: 12, status: "Low Stock" },
+  { id: 1, product: "Pellets", sizes: [{ size: "6mm", price: "₹8.50/kg" }, { size: "8mm", price: "₹9/kg" }, { size: "10mm", price: "₹10/kg" }], purposes: ["Commercial Kitchen", "Boiler", "Hotel", "Industrial Dryer"], deliveryFee: "₹150" },
+  { id: 2, product: "Biomass Stove", sizes: [{ size: "Small", price: "₹3,500" }, { size: "Medium", price: "₹5,000" }, { size: "Large", price: "₹7,500" }], purposes: ["Domestic Cooking", "Commercial Cooking"], deliveryFee: "₹800" },
+  { id: 3, product: "Biomass Burner", sizes: [{ size: "50kW", price: "₹25,000" }, { size: "100kW", price: "₹40,000" }, { size: "200kW", price: "₹60,000" }], purposes: ["Industrial Heating", "Steam Generation", "Drying"], deliveryFee: "₹2,000" },
 ];
 
 interface FormState {
@@ -42,10 +40,9 @@ interface FormState {
   purposes: string[];
   newPurpose: string;
   deliveryFee: string;
-  stock: number;
 }
 
-const emptyForm: FormState = { id: 0, product: "Pellets", sizes: [{ size: "", price: "" }], purposes: [], newPurpose: "", deliveryFee: "", stock: 0 };
+const emptyForm: FormState = { id: 0, product: "Pellets", sizes: [{ size: "", price: "" }], purposes: [], newPurpose: "", deliveryFee: "" };
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -58,12 +55,10 @@ export default function Products() {
     p.product.toLowerCase().includes(search.toLowerCase())
   );
 
-  const getStatus = (stock: number) => stock > 20 ? "In Stock" : stock > 0 ? "Low Stock" : "Out of Stock";
-
   const handleAdd = () => {
     const validSizes = form.sizes.filter(s => s.size && s.price);
     if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
-    const newProduct: Product = { id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee, stock: form.stock, status: getStatus(form.stock) };
+    const newProduct: Product = { id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee };
     setProducts([...products, newProduct]);
     setForm({ ...emptyForm });
     setAddOpen(false);
@@ -73,7 +68,7 @@ export default function Products() {
   const handleEdit = () => {
     const validSizes = form.sizes.filter(s => s.size && s.price);
     if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
-    const updated: Product = { id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee, stock: form.stock, status: getStatus(form.stock) };
+    const updated: Product = { id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee };
     setProducts(products.map(p => p.id === form.id ? updated : p));
     setEditOpen(false);
     toast.success(`Product "${form.product}" updated`);
@@ -85,7 +80,7 @@ export default function Products() {
   };
 
   const openEdit = (p: Product) => {
-    setForm({ id: p.id, product: p.product, sizes: [...p.sizes], purposes: [...p.purposes], newPurpose: "", deliveryFee: p.deliveryFee, stock: p.stock });
+    setForm({ id: p.id, product: p.product, sizes: [...p.sizes], purposes: [...p.purposes], newPurpose: "", deliveryFee: p.deliveryFee });
     setEditOpen(true);
   };
 
@@ -150,15 +145,9 @@ export default function Products() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Stock</label>
-          <Input type="number" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: Number(e.target.value) }))} className="mt-1" />
-        </div>
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
-          <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹150" className="mt-1" />
-        </div>
+      <div>
+        <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
+        <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹150" className="mt-1" />
       </div>
 
       <DialogFooter>
@@ -214,8 +203,6 @@ export default function Products() {
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes & Prices</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Purposes</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Delivery Fee</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Stock</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Status</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
@@ -240,14 +227,6 @@ export default function Products() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{p.deliveryFee}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.stock}</td>
-                  <td className="px-6 py-4">
-                    <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      p.status === "In Stock" ? "bg-primary/10 text-primary" :
-                      p.status === "Low Stock" ? "bg-yellow-50 text-yellow-600" :
-                      "bg-destructive/10 text-destructive"
-                    }`}>{p.status}</span>
-                  </td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-muted rounded-lg mr-1"><Edit className="h-4 w-4 text-muted-foreground" /></button>
                     <AlertDialog>
@@ -269,7 +248,7 @@ export default function Products() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
               )}
             </tbody>
           </table>
