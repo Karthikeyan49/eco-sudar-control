@@ -60,29 +60,29 @@ export default function Dealers() {
 
   const openEdit = (d: Dealer) => { setForm({ ...d, password: "" }); setEditOpen(true); };
 
-  const DealerForm = ({ onSubmit, submitLabel, showPassword }: { onSubmit: () => void; submitLabel: string; showPassword: boolean }) => (
+  const renderForm = (onSubmit: () => void, submitLabel: string, showPassword: boolean) => (
     <div className="space-y-4 py-2">
       {showPassword && <p className="text-xs text-muted-foreground">Dealer will login with their phone number and the password you set below.</p>}
       <div>
         <label className="text-sm font-medium text-card-foreground">Dealer Name *</label>
-        <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Full name" className="mt-1" />
+        <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Full name" className="mt-1" />
       </div>
       <div>
         <label className="text-sm font-medium text-card-foreground">Company</label>
-        <Input value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} placeholder="Company name" className="mt-1" />
+        <Input value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} placeholder="Company name" className="mt-1" />
       </div>
       <div>
         <label className="text-sm font-medium text-card-foreground">Phone Number (Login ID) *</label>
-        <Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+91 XXXXX XXXXX" className="mt-1" />
+        <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+91 XXXXX XXXXX" className="mt-1" />
       </div>
       <div>
         <label className="text-sm font-medium text-card-foreground">Location</label>
-        <Input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="City, State" className="mt-1" />
+        <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="City, State" className="mt-1" />
       </div>
       {showPassword && (
         <div>
           <label className="text-sm font-medium text-card-foreground">Password *</label>
-          <Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Set login password" className="mt-1" />
+          <Input type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="Set login password" className="mt-1" />
         </div>
       )}
       <DialogFooter>
@@ -107,7 +107,7 @@ export default function Dealers() {
               <DialogTitle>Create Dealer Credentials</DialogTitle>
               <DialogDescription>Set up a new dealer with phone number login.</DialogDescription>
             </DialogHeader>
-            <DealerForm onSubmit={handleAdd} submitLabel="Create Credentials" showPassword />
+            {renderForm(handleAdd, "Create Credentials", true)}
           </DialogContent>
         </Dialog>
         <Button onClick={() => setAddOpen(true)} className="gap-2"><Plus className="h-4 w-4" /> Add Dealer</Button>
@@ -119,7 +119,7 @@ export default function Dealers() {
             <DialogTitle>Edit Dealer</DialogTitle>
             <DialogDescription>Update dealer information.</DialogDescription>
           </DialogHeader>
-          <DealerForm onSubmit={handleEdit} submitLabel="Save Changes" showPassword={false} />
+          {renderForm(handleEdit, "Save Changes", false)}
         </DialogContent>
       </Dialog>
 
