@@ -11,7 +11,7 @@ import Orders from "./pages/Orders";
 import OrderHistory from "./pages/OrderHistory";
 import Customers from "./pages/Customers";
 import Dealers from "./pages/Dealers";
-import Inventory from "./pages/Inventory";
+
 import Invoices from "./pages/Invoices";
 import SettingsPage from "./pages/Settings";
 import Login from "./pages/Login";
