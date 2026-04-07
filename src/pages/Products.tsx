@@ -150,7 +150,7 @@ export default function Products() {
             <DialogTitle>Edit Product</DialogTitle>
             <DialogDescription>Update the product details below.</DialogDescription>
           </DialogHeader>
-          <ProductForm onSubmit={handleEdit} submitLabel="Save Changes" />
+          {renderForm(handleEdit, "Save Changes")}
         </DialogContent>
       </Dialog>
 
