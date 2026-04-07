@@ -3,11 +3,13 @@ import {
   Store,
   Users,
   ShoppingCart,
-  Factory,
-  ClipboardCheck,
+  Package,
+  Warehouse,
+  FileText,
+  History,
   Settings,
   ChevronLeft,
-  Package,
+  UserCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -26,12 +28,13 @@ import {
 
 const menuItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Storefront", url: "/products", icon: Store },
-  { title: "Dealer Network", url: "/dealers", icon: Users },
-  { title: "Sourcing", url: "/sourcing", icon: ShoppingCart },
-  { title: "Production", url: "/production", icon: Factory },
-  { title: "Quality Control", url: "/quality", icon: ClipboardCheck },
-  { title: "Orders", url: "/orders", icon: Package },
+  { title: "Products", url: "/products", icon: Store },
+  { title: "Orders", url: "/orders", icon: ShoppingCart },
+  { title: "Order History", url: "/order-history", icon: History },
+  { title: "Customers", url: "/customers", icon: Users },
+  { title: "Dealer Network", url: "/dealers", icon: UserCheck },
+  { title: "Inventory", url: "/inventory", icon: Warehouse },
+  { title: "Invoices", url: "/invoices", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
