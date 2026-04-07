@@ -23,8 +23,6 @@ interface Product {
   sizes: SizePrice[];
   purposes: string[];
   deliveryFee: string;
-  stock: number;
-  status: string;
 }
 
 const productTypes = ["Pellets", "Biomass Stove", "Biomass Burner"];
