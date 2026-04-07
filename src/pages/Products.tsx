@@ -73,16 +73,16 @@ export default function Products() {
 
   const openEdit = (p: Product) => { setForm({ ...p }); setEditOpen(true); };
 
-  const ProductForm = ({ onSubmit, submitLabel }: { onSubmit: () => void; submitLabel: string }) => (
+  const renderForm = (onSubmit: () => void, submitLabel: string) => (
     <div className="space-y-4 py-2">
       <div>
         <label className="text-sm font-medium text-card-foreground">Product Name *</label>
-        <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Biomass Pellets" className="mt-1" />
+        <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Biomass Pellets" className="mt-1" />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-card-foreground">Category *</label>
-          <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
+          <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
             <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="Pellets">Pellets</SelectItem>
@@ -93,27 +93,27 @@ export default function Products() {
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Price *</label>
-          <Input value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} placeholder="₹15/kg or ₹3,500" className="mt-1" />
+          <Input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="₹15/kg or ₹3,500" className="mt-1" />
         </div>
       </div>
       <div>
         <label className="text-sm font-medium text-card-foreground">Available Sizes</label>
-        <Input value={form.sizes} onChange={e => setForm({ ...form, sizes: e.target.value })} placeholder="e.g. 10kg, 25kg, 50kg" className="mt-1" />
+        <Input value={form.sizes} onChange={e => setForm(f => ({ ...f, sizes: e.target.value }))} placeholder="e.g. 10kg, 25kg, 50kg" className="mt-1" />
         <p className="text-xs text-muted-foreground mt-1">Comma-separated sizes shown in app</p>
       </div>
       <div>
         <label className="text-sm font-medium text-card-foreground">Purposes</label>
-        <Textarea value={form.purposes} onChange={e => setForm({ ...form, purposes: e.target.value })} placeholder="e.g. Industrial Heating, Boiler Fuel" className="mt-1" rows={2} />
+        <Textarea value={form.purposes} onChange={e => setForm(f => ({ ...f, purposes: e.target.value }))} placeholder="e.g. Industrial Heating, Boiler Fuel" className="mt-1" rows={2} />
         <p className="text-xs text-muted-foreground mt-1">Comma-separated purposes users can select</p>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-card-foreground">Stock</label>
-          <Input type="number" value={form.stock} onChange={e => setForm({ ...form, stock: Number(e.target.value) })} className="mt-1" />
+          <Input type="number" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: Number(e.target.value) }))} className="mt-1" />
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
-          <Input value={form.deliveryFee} onChange={e => setForm({ ...form, deliveryFee: e.target.value })} placeholder="₹500" className="mt-1" />
+          <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹500" className="mt-1" />
         </div>
       </div>
       <DialogFooter>
@@ -139,7 +139,7 @@ export default function Products() {
               <DialogTitle>Add New Product</DialogTitle>
               <DialogDescription>This product will be visible in the mobile app.</DialogDescription>
             </DialogHeader>
-            <ProductForm onSubmit={handleAdd} submitLabel="Add Product" />
+            {renderForm(handleAdd, "Add Product")}
           </DialogContent>
         </Dialog>
       </div>
@@ -150,7 +150,7 @@ export default function Products() {
             <DialogTitle>Edit Product</DialogTitle>
             <DialogDescription>Update the product details below.</DialogDescription>
           </DialogHeader>
-          <ProductForm onSubmit={handleEdit} submitLabel="Save Changes" />
+          {renderForm(handleEdit, "Save Changes")}
         </DialogContent>
       </Dialog>
 
