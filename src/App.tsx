@@ -35,7 +35,7 @@ function ProtectedRoutes() {
         <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/dealers" element={<Dealers />} />
-        <Route path="/inventory" element={<Inventory />} />
+        
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFound />} />
