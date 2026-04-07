@@ -139,7 +139,7 @@ export default function Products() {
               <DialogTitle>Add New Product</DialogTitle>
               <DialogDescription>This product will be visible in the mobile app.</DialogDescription>
             </DialogHeader>
-            <ProductForm onSubmit={handleAdd} submitLabel="Add Product" />
+            {renderForm(handleAdd, "Add Product")}
           </DialogContent>
         </Dialog>
       </div>
