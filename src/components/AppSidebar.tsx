@@ -4,7 +4,6 @@ import {
   Users,
   ShoppingCart,
   Package,
-  Warehouse,
   FileText,
   History,
   Settings,
