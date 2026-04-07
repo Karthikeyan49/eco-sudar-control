@@ -42,7 +42,6 @@ interface FormState {
   purposes: string[];
   newPurpose: string;
   deliveryFee: string;
-  stock: number;
 }
 
 const emptyForm: FormState = { id: 0, product: "Pellets", sizes: [{ size: "", price: "" }], purposes: [], newPurpose: "", deliveryFee: "", stock: 0 };
