@@ -1,6 +1,9 @@
-import { Search, Bell, User } from "lucide-react";
+import { Search, Bell, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function TopNavbar() {
   return (
