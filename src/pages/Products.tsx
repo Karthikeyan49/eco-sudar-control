@@ -1,5 +1,6 @@
 import { Plus, Search, Edit, Trash2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -23,14 +24,24 @@ interface Product {
   sizes: SizePrice[];
   purposes: string[];
   deliveryFee: string;
+  description: string;
+  category: string;
+  stock: number;
+  minOrderQty: number;
+  imageUrl: string;
 }
 
-const productTypes = ["Pellets", "Biomass Stove", "Biomass Burner"];
+const productCategories = [
+  "Pellets", "Biomass Stove", "Biomass Burner",
+  "Eco-Friendly Plates", "Eco-Friendly Bowls", "Eco-Friendly Cups",
+  "Cutlery", "Food Containers", "Straws & Stirrers",
+];
 
 const initialProducts: Product[] = [
-  { id: 1, product: "Pellets", sizes: [{ size: "6mm", price: "₹8.50/kg" }, { size: "8mm", price: "₹9/kg" }, { size: "10mm", price: "₹10/kg" }], purposes: ["Commercial Kitchen", "Boiler", "Hotel", "Industrial Dryer"], deliveryFee: "₹150" },
-  { id: 2, product: "Biomass Stove", sizes: [{ size: "Small", price: "₹3,500" }, { size: "Medium", price: "₹5,000" }, { size: "Large", price: "₹7,500" }], purposes: ["Domestic Cooking", "Commercial Cooking"], deliveryFee: "₹800" },
-  { id: 3, product: "Biomass Burner", sizes: [{ size: "50kW", price: "₹25,000" }, { size: "100kW", price: "₹40,000" }, { size: "200kW", price: "₹60,000" }], purposes: ["Industrial Heating", "Steam Generation", "Drying"], deliveryFee: "₹2,000" },
+  { id: 1, product: "Pellets", sizes: [{ size: "6mm", price: "₹8.50/kg" }, { size: "8mm", price: "₹9/kg" }, { size: "10mm", price: "₹10/kg" }], purposes: ["Commercial Kitchen", "Boiler", "Hotel", "Industrial Dryer"], deliveryFee: "₹150", description: "High-quality biomass pellets for industrial and commercial use", category: "Pellets", stock: 500, minOrderQty: 5, imageUrl: "" },
+  { id: 2, product: "Biomass Stove", sizes: [{ size: "Small", price: "₹3,500" }, { size: "Medium", price: "₹5,000" }, { size: "Large", price: "₹7,500" }], purposes: ["Domestic Cooking", "Commercial Cooking"], deliveryFee: "₹800", description: "Efficient biomass cooking stoves for home and commercial kitchens", category: "Biomass Stove", stock: 45, minOrderQty: 1, imageUrl: "" },
+  { id: 3, product: "Biomass Burner", sizes: [{ size: "50kW", price: "₹25,000" }, { size: "100kW", price: "₹40,000" }, { size: "200kW", price: "₹60,000" }], purposes: ["Industrial Heating", "Steam Generation", "Drying"], deliveryFee: "₹2,000", description: "Industrial biomass burners for heating and steam generation", category: "Biomass Burner", stock: 12, minOrderQty: 1, imageUrl: "" },
+  { id: 4, product: "Eco Plates", sizes: [{ size: "6 inch", price: "₹3/pc" }, { size: "8 inch", price: "₹4/pc" }, { size: "10 inch", price: "₹5/pc" }], purposes: ["Events", "Restaurants", "Catering"], deliveryFee: "₹100", description: "Biodegradable plates made from areca leaves", category: "Eco-Friendly Plates", stock: 0, minOrderQty: 50, imageUrl: "" },
 ];
 
 interface FormState {
@@ -40,9 +51,20 @@ interface FormState {
   purposes: string[];
   newPurpose: string;
   deliveryFee: string;
+  description: string;
+  category: string;
+  stock: number;
+  minOrderQty: number;
+  imageUrl: string;
 }
 
-const emptyForm: FormState = { id: 0, product: "Pellets", sizes: [{ size: "", price: "" }], purposes: [], newPurpose: "", deliveryFee: "" };
+const emptyForm: FormState = { id: 0, product: "", sizes: [{ size: "", price: "" }], purposes: [], newPurpose: "", deliveryFee: "", description: "", category: "Pellets", stock: 0, minOrderQty: 1, imageUrl: "" };
+
+function StockBadge({ stock }: { stock: number }) {
+  if (stock === 0) return <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-destructive/10 text-destructive">Out of Stock</span>;
+  if (stock <= 100) return <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-yellow-50 text-status-processing">{stock} units</span>;
+  return <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-primary/10 text-primary">{stock} units</span>;
+}
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -52,13 +74,14 @@ export default function Products() {
   const [form, setForm] = useState<FormState>({ ...emptyForm });
 
   const filtered = products.filter(p =>
-    p.product.toLowerCase().includes(search.toLowerCase())
+    p.product.toLowerCase().includes(search.toLowerCase()) ||
+    p.category.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleAdd = () => {
     const validSizes = form.sizes.filter(s => s.size && s.price);
     if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
-    const newProduct: Product = { id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee };
+    const newProduct: Product = { id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee, description: form.description, category: form.category, stock: form.stock, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl };
     setProducts([...products, newProduct]);
     setForm({ ...emptyForm });
     setAddOpen(false);
@@ -68,7 +91,7 @@ export default function Products() {
   const handleEdit = () => {
     const validSizes = form.sizes.filter(s => s.size && s.price);
     if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
-    const updated: Product = { id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee };
+    const updated: Product = { id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes, deliveryFee: form.deliveryFee, description: form.description, category: form.category, stock: form.stock, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl };
     setProducts(products.map(p => p.id === form.id ? updated : p));
     setEditOpen(false);
     toast.success(`Product "${form.product}" updated`);
@@ -80,7 +103,7 @@ export default function Products() {
   };
 
   const openEdit = (p: Product) => {
-    setForm({ id: p.id, product: p.product, sizes: [...p.sizes], purposes: [...p.purposes], newPurpose: "", deliveryFee: p.deliveryFee });
+    setForm({ id: p.id, product: p.product, sizes: [...p.sizes], purposes: [...p.purposes], newPurpose: "", deliveryFee: p.deliveryFee, description: p.description, category: p.category, stock: p.stock, minOrderQty: p.minOrderQty, imageUrl: p.imageUrl });
     setEditOpen(true);
   };
 
@@ -102,15 +125,54 @@ export default function Products() {
   const removePurpose = (index: number) => setForm(f => ({ ...f, purposes: f.purposes.filter((_, i) => i !== index) }));
 
   const renderForm = (onSubmit: () => void, submitLabel: string) => (
-    <div className="space-y-4 py-2">
+    <div className="space-y-4 py-2 max-h-[65vh] overflow-y-auto pr-1">
+      {/* Image preview */}
+      {form.imageUrl && (
+        <div className="flex items-center gap-3">
+          <img src={form.imageUrl} alt="Product" className="h-16 w-16 rounded-lg object-cover border" />
+          <span className="text-sm text-muted-foreground">Product Image</span>
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Product Name *</label>
+          <Input value={form.product} onChange={e => setForm(f => ({ ...f, product: e.target.value }))} placeholder="e.g. Biomass Pellets" className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Category *</label>
+          <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
+            <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {productCategories.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div>
-        <label className="text-sm font-medium text-card-foreground">Product *</label>
-        <Select value={form.product} onValueChange={v => setForm(f => ({ ...f, product: v }))}>
-          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {productTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        <label className="text-sm font-medium text-card-foreground">Description</label>
+        <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Product description for app..." className="mt-1" rows={2} />
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Stock</label>
+          <Input type="number" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: parseInt(e.target.value) || 0 }))} className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Min Order Qty</label>
+          <Input type="number" value={form.minOrderQty} onChange={e => setForm(f => ({ ...f, minOrderQty: parseInt(e.target.value) || 1 }))} className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
+          <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹150" className="mt-1" />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-card-foreground">Image URL</label>
+        <Input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." className="mt-1" />
       </div>
 
       <div>
@@ -145,11 +207,6 @@ export default function Products() {
         </div>
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
-        <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹150" className="mt-1" />
-      </div>
-
       <DialogFooter>
         <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
         <Button onClick={onSubmit}>{submitLabel}</Button>
@@ -168,7 +225,7 @@ export default function Products() {
           <DialogTrigger asChild>
             <Button className="gap-2"><Plus className="h-4 w-4" /> Add Product</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>Add New Product</DialogTitle>
               <DialogDescription>This product will be visible in the mobile app.</DialogDescription>
@@ -179,7 +236,7 @@ export default function Products() {
       </div>
 
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
             <DialogDescription>Update the product details below.</DialogDescription>
@@ -200,8 +257,9 @@ export default function Products() {
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Product</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Category</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes & Prices</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Purposes</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Stock</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Delivery Fee</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
@@ -209,7 +267,13 @@ export default function Products() {
             <tbody>
               {filtered.map((p) => (
                 <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-card-foreground">{p.product}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      {p.imageUrl && <img src={p.imageUrl} alt={p.product} className="h-8 w-8 rounded object-cover" />}
+                      <span className="text-sm font-medium text-card-foreground">{p.product}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.category}</td>
                   <td className="px-6 py-4">
                     <div className="space-y-1">
                       {p.sizes.map((sp, i) => (
@@ -219,13 +283,7 @@ export default function Products() {
                       ))}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {p.purposes.map((pu, i) => (
-                        <span key={i} className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{pu}</span>
-                      ))}
-                    </div>
-                  </td>
+                  <td className="px-6 py-4"><StockBadge stock={p.stock} /></td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{p.deliveryFee}</td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-muted rounded-lg mr-1"><Edit className="h-4 w-4 text-muted-foreground" /></button>
@@ -248,7 +306,7 @@ export default function Products() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
+                <tr><td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">No products found</td></tr>
               )}
             </tbody>
           </table>
