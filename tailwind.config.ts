@@ -62,6 +62,10 @@ export default {
           processing: "hsl(var(--status-processing))",
           shipped: "hsl(var(--status-shipped))",
           pending: "hsl(var(--status-pending))",
+          confirmed: "hsl(var(--status-confirmed))",
+          "out-for-delivery": "hsl(var(--status-out-for-delivery))",
+          cancelled: "hsl(var(--status-cancelled))",
+          returned: "hsl(var(--status-returned))",
         },
       },
       borderRadius: {
