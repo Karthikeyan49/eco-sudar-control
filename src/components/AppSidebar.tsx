@@ -9,6 +9,7 @@ import {
   Settings,
   ChevronLeft,
   UserCheck,
+  RotateCcw,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -30,6 +31,7 @@ const menuItems = [
   { title: "Products", url: "/products", icon: Store },
   { title: "Orders", url: "/orders", icon: ShoppingCart },
   { title: "Order History", url: "/order-history", icon: History },
+  { title: "Cancellations & Returns", url: "/cancellations", icon: RotateCcw },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Dealer Network", url: "/dealers", icon: UserCheck },
   { title: "Invoices", url: "/invoices", icon: FileText },
