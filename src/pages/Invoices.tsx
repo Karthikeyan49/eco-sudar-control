@@ -7,15 +7,61 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose,
 } from "@/components/ui/dialog";
 
+interface InvoiceItem {
+  product: string;
+  size: string;
+  qty: number;
+  unitPrice: string;
+  lineTotal: string;
+}
+
 interface Invoice {
-  id: string; orderId: string; customer: string; gst: string; subtotal: string; gstAmount: string; total: string; date: string; status: string;
+  id: string;
+  orderId: string;
+  customer: string;
+  gst: string;
+  items: InvoiceItem[];
+  subtotal: string;
+  gstAmount: string;
+  deliveryFee: string;
+  total: string;
+  date: string;
+  status: string;
+  paymentMethod: string;
+  trackingNumber: string;
 }
 
 const invoices: Invoice[] = [
-  { id: "INV-2024-001", orderId: "ORD-2024-001", customer: "Green Industries Ltd", gst: "33AABCG1234F1Z5", subtotal: "₹10,000", gstAmount: "₹1,800", total: "₹11,800", date: "2024-03-10", status: "Paid" },
-  { id: "INV-2024-002", orderId: "ORD-2023-098", customer: "BioFuel Corp", gst: "33AABCB7890M1Z7", subtotal: "₹27,000", gstAmount: "₹4,860", total: "₹31,860", date: "2024-03-08", status: "Paid" },
-  { id: "INV-2024-003", orderId: "ORD-2023-095", customer: "Rural Energy Hub", gst: "33AABCR3456L1Z9", subtotal: "₹9,600", gstAmount: "₹1,728", total: "₹11,328", date: "2024-03-05", status: "Pending" },
-  { id: "INV-2024-004", orderId: "ORD-2023-090", customer: "EcoHeat Solutions", gst: "33AABCE5678H1Z3", subtotal: "₹28,000", gstAmount: "₹5,040", total: "₹33,040", date: "2024-02-28", status: "Paid" },
+  {
+    id: "INV-2024-001", orderId: "ORD-2024-001", customer: "Green Industries Ltd", gst: "33AABCG1234F1Z5",
+    items: [
+      { product: "Biomass Pellets", size: "6mm", qty: 10, unitPrice: "₹750", lineTotal: "₹7,500" },
+      { product: "Biomass Stove", size: "Medium", qty: 1, unitPrice: "₹5,000", lineTotal: "₹5,000" },
+    ],
+    subtotal: "₹12,500", gstAmount: "₹2,250", deliveryFee: "₹500", total: "₹15,250", date: "2024-03-10", status: "Paid", paymentMethod: "UPI", trackingNumber: "",
+  },
+  {
+    id: "INV-2024-002", orderId: "ORD-2024-003", customer: "Biomass Trading Co", gst: "33AABCB7890M1Z7",
+    items: [
+      { product: "Biomass Burner", size: "100kW", qty: 1, unitPrice: "₹40,000", lineTotal: "₹40,000" },
+    ],
+    subtotal: "₹40,000", gstAmount: "₹7,200", deliveryFee: "₹2,000", total: "₹49,200", date: "2024-03-08", status: "Paid", paymentMethod: "Net Banking", trackingNumber: "TRK-9876543210",
+  },
+  {
+    id: "INV-2024-003", orderId: "ORD-2024-002", customer: "EcoHeat Solutions", gst: "33AABCE5678H1Z3",
+    items: [
+      { product: "Biomass Stove", size: "Large", qty: 2, unitPrice: "₹7,500", lineTotal: "₹15,000" },
+    ],
+    subtotal: "₹15,000", gstAmount: "₹2,700", deliveryFee: "₹800", total: "₹18,500", date: "2024-03-05", status: "Pending", paymentMethod: "Online", trackingNumber: "",
+  },
+  {
+    id: "INV-2024-004", orderId: "ORD-2024-004", customer: "Rural Energy Hub", gst: "33AABCR3456L1Z9",
+    items: [
+      { product: "Wood Pellets", size: "8mm", qty: 20, unitPrice: "₹450", lineTotal: "₹9,000" },
+      { product: "Biomass Pellets", size: "10mm", qty: 5, unitPrice: "₹500", lineTotal: "₹2,500" },
+    ],
+    subtotal: "₹11,500", gstAmount: "₹2,070", deliveryFee: "₹600", total: "₹14,170", date: "2024-02-28", status: "Paid", paymentMethod: "COD", trackingNumber: "",
+  },
 ];
 
 const statusColors: Record<string, string> = {
@@ -38,7 +84,6 @@ export default function Invoices() {
 
   const downloadInvoice = (inv: Invoice) => {
     toast.success(`Downloading ${inv.id}...`);
-    // In production: call PHP API to generate PDF
   };
 
   return (
@@ -49,7 +94,7 @@ export default function Invoices() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Invoice {selected?.id}</DialogTitle>
             <DialogDescription>Invoice details and GST breakdown.</DialogDescription>
@@ -61,10 +106,46 @@ export default function Invoices() {
                 <div><span className="text-muted-foreground">Date:</span><p className="font-medium text-card-foreground">{selected.date}</p></div>
                 <div><span className="text-muted-foreground">Customer:</span><p className="font-medium text-card-foreground">{selected.customer}</p></div>
                 <div><span className="text-muted-foreground">GSTIN:</span><p className="font-medium text-card-foreground font-mono text-xs">{selected.gst}</p></div>
+                <div><span className="text-muted-foreground">Payment Method:</span><p className="font-medium text-card-foreground">{selected.paymentMethod}</p></div>
+                {selected.trackingNumber && (
+                  <div><span className="text-muted-foreground">Tracking Number:</span><p className="font-medium text-card-foreground font-mono text-xs">{selected.trackingNumber}</p></div>
+                )}
               </div>
+
+              {/* Line Items Table */}
+              <div className="border-t pt-3">
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase mb-2">Line Items</h4>
+                <div className="overflow-x-auto border rounded-lg">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-muted/50 border-b">
+                        <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground">Product</th>
+                        <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground">Size</th>
+                        <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground">Qty</th>
+                        <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground">Unit Price</th>
+                        <th className="text-right px-3 py-2 text-xs font-semibold text-muted-foreground">Line Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selected.items.map((item, i) => (
+                        <tr key={i} className="border-b last:border-0">
+                          <td className="px-3 py-2 font-medium text-card-foreground">{item.product}</td>
+                          <td className="px-3 py-2 text-muted-foreground">{item.size}</td>
+                          <td className="px-3 py-2 text-muted-foreground">{item.qty}</td>
+                          <td className="px-3 py-2 text-muted-foreground">{item.unitPrice}</td>
+                          <td className="px-3 py-2 text-right font-medium text-card-foreground">{item.lineTotal}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
               <div className="border-t pt-3 space-y-2">
                 <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="font-medium text-card-foreground">{selected.subtotal}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">GST (18%)</span><span className="font-medium text-card-foreground">{selected.gstAmount}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Delivery Fee</span><span className="font-medium text-card-foreground">{selected.deliveryFee}</span></div>
                 <div className="flex justify-between border-t pt-2"><span className="font-semibold text-card-foreground">Total</span><span className="font-bold text-primary text-lg">{selected.total}</span></div>
               </div>
               <div className="flex justify-between items-center pt-2">
@@ -93,9 +174,9 @@ export default function Invoices() {
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Invoice</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Order</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Customer</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Subtotal</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">GST (18%)</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Items</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Total</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Payment</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Status</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
@@ -109,9 +190,9 @@ export default function Invoices() {
                     <p className="text-sm font-medium text-card-foreground">{inv.customer}</p>
                     <p className="text-xs text-muted-foreground font-mono">{inv.gst}</p>
                   </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{inv.subtotal}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{inv.gstAmount}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{inv.items.length} item(s)</td>
                   <td className="px-6 py-4 text-sm font-semibold text-card-foreground">{inv.total}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{inv.paymentMethod}</td>
                   <td className="px-6 py-4">
                     <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[inv.status]}`}>{inv.status}</span>
                   </td>

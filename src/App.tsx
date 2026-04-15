@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
 import OrderHistory from "./pages/OrderHistory";
+import Cancellations from "./pages/Cancellations";
 import Customers from "./pages/Customers";
 import Dealers from "./pages/Dealers";
 import Invoices from "./pages/Invoices";
@@ -32,8 +33,8 @@ function ProtectedRoutes() {
         <Route path="/products" element={<Products />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/order-history" element={<OrderHistory />} />
+        <Route path="/cancellations" element={<Cancellations />} />
         <Route path="/customers" element={<Customers />} />
-        <Route path="/dealers" element={<Dealers />} />
         
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/settings" element={<SettingsPage />} />

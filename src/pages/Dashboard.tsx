@@ -1,15 +1,7 @@
-import { Package, IndianRupee, ShoppingCart, Users } from "lucide-react";
+import { Package, IndianRupee, ShoppingCart, Users, TrendingDown, RefreshCcw } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import {
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
 
 const salesData = [
@@ -30,11 +22,21 @@ const revenueData = [
   { month: "Jun", revenue: 550000 },
 ];
 
+const topProductsData = [
+  { name: "Pellets 6mm", orders: 42 },
+  { name: "Pellets 8mm", orders: 31 },
+  { name: "Biomass Stove Medium", orders: 18 },
+  { name: "Biomass Burner 100kW", orders: 12 },
+  { name: "Pellets 10mm", orders: 9 },
+];
+
 const recentOrders = [
-  { id: "ORD-2024-001", customer: "Green Industries Ltd", weight: "500kg", amount: "₹10,000", status: "Delivered" },
-  { id: "ORD-2024-002", customer: "EcoHeat Solutions", weight: "2000kg", amount: "₹36,000", status: "Shipped" },
-  { id: "ORD-2024-003", customer: "Biomass Trading Co", weight: "100kg", amount: "₹2,500", status: "Processing" },
-  { id: "ORD-2024-004", customer: "Rural Energy Hub", weight: "3500kg", amount: "₹52,500", status: "Pending" },
+  { id: "ORD-2024-001", customer: "Green Industries Ltd", weight: "2 items", amount: "₹15,250", status: "Confirmed" },
+  { id: "ORD-2024-002", customer: "EcoHeat Solutions", weight: "1 item", amount: "₹18,000", status: "Out for Delivery" },
+  { id: "ORD-2024-003", customer: "Biomass Trading Co", weight: "1 item", amount: "₹49,200", status: "Shipped" },
+  { id: "ORD-2024-004", customer: "Rural Energy Hub", weight: "2 items", amount: "₹13,970", status: "Pending" },
+  { id: "ORD-2024-006", customer: "Kavitha R", weight: "1 item", amount: "₹4,930", status: "Cancelled" },
+  { id: "ORD-2024-007", customer: "Mohan Das", weight: "1 item", amount: "₹31,500", status: "Returned" },
 ];
 
 const statusColors: Record<string, string> = {
@@ -42,6 +44,10 @@ const statusColors: Record<string, string> = {
   Shipped: "bg-blue-50 text-status-shipped",
   Processing: "bg-yellow-50 text-status-processing",
   Pending: "bg-muted text-status-pending",
+  Confirmed: "bg-indigo-50 text-status-confirmed",
+  "Out for Delivery": "bg-orange-50 text-status-out-for-delivery",
+  Cancelled: "bg-destructive/10 text-destructive",
+  Returned: "bg-purple-50 text-status-returned",
 };
 
 export default function Dashboard() {
@@ -60,15 +66,17 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stat Cards — 6-card grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard title="Total Products" value="48" subtitle="6 categories" icon={Package} />
         <StatCard title="Total Orders" value="156" subtitle="+12 this week" icon={ShoppingCart} />
         <StatCard title="Revenue" value="₹6.2L" subtitle="+8.5% from last month" icon={IndianRupee} />
         <StatCard title="Active Users" value="234" subtitle="+18 new this month" icon={Users} />
+        <StatCard title="Cancelled Orders" value="12" subtitle="↑3 this week" icon={TrendingDown} subtitleColor="muted" />
+        <StatCard title="Pending Refunds" value="5" subtitle="₹24,500 value" icon={RefreshCcw} subtitleColor="muted" />
       </div>
 
-      {/* Charts */}
+      {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card rounded-xl border p-6 shadow-sm">
           <h3 className="font-semibold text-card-foreground mb-1">Sales Analytics</h3>
@@ -99,6 +107,21 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Top Products Chart — full width */}
+      <div className="bg-card rounded-xl border p-6 shadow-sm">
+        <h3 className="font-semibold text-card-foreground mb-1">Top Products by Orders</h3>
+        <p className="text-xs text-muted-foreground mb-4">Top 5 products by order count</p>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={topProductsData} layout="vertical" margin={{ left: 100 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis type="number" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
+            <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} width={100} />
+            <Tooltip />
+            <Bar dataKey="orders" fill="hsl(152,60%,36%)" radius={[0, 4, 4, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
       {/* Recent Orders */}
       <div className="bg-card rounded-xl border shadow-sm">
         <div className="flex items-center justify-between p-6 pb-4">
@@ -122,7 +145,7 @@ export default function Dashboard() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-sm text-card-foreground">{order.amount}</span>
-                <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[order.status]}`}>
+                <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[order.status] || "bg-muted text-muted-foreground"}`}>
                   {order.status}
                 </span>
               </div>

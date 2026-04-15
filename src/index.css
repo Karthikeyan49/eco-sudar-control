@@ -45,6 +45,10 @@
     --status-processing: 45 90% 50%;
     --status-shipped: 210 70% 55%;
     --status-pending: 220 10% 60%;
+    --status-confirmed: 240 60% 55%;
+    --status-out-for-delivery: 30 90% 52%;
+    --status-cancelled: 0 72% 51%;
+    --status-returned: 280 55% 52%;
 
     --sidebar-background: 160 30% 14%;
     --sidebar-foreground: 0 0% 92%;
