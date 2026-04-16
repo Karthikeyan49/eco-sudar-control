@@ -51,7 +51,7 @@ const initialProducts: Product[] = [
       "Commercial Kitchen": ["Restaurant Kitchen", "Hotel Kitchen", "Catering Service", "Food Court", "Canteen", "Custom"],
       "Industrial Dryer": ["Textile Dryer", "Food Processing Dryer", "Pharmaceutical Dryer", "Chemical Dryer", "Agricultural Dryer", "Custom"],
     },
-    deliveryFee: "₹150", description: "High-quality biomass pellets for industrial and commercial use",
+    description: "High-quality biomass pellets for industrial and commercial use",
     category: "Pellets", stock: 500, minOrderQty: 5, imageUrl: ""
   },
   {
