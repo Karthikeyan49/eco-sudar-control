@@ -45,6 +45,8 @@ export default function Dealers() {
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [createdDealer, setCreatedDealer] = useState<{ name: string; email: string } | null>(null);
   const [viewDealer, setViewDealer] = useState<Dealer | null>(null);
   const [form, setForm] = useState({ ...emptyDealer });
 
