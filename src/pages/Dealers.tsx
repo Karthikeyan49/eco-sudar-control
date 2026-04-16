@@ -61,9 +61,10 @@ export default function Dealers() {
     if (!form.contactPerson || !form.phone || !form.password) { toast.error("Contact person, phone & password are required"); return; }
     const newDealer: Dealer = { ...form, id: Date.now() };
     setDealers([...dealers, newDealer]);
+    setCreatedDealer({ name: form.contactPerson, email: form.email });
     setForm({ ...emptyDealer });
     setAddOpen(false);
-    toast.success(`Dealer "${form.contactPerson}" created with phone login`);
+    setSuccessOpen(true);
   };
 
   const handleEdit = () => {
