@@ -261,14 +261,64 @@ export default function Orders() {
                 <div className="flex justify-between border-t pt-1.5"><span className="font-semibold text-card-foreground">Grand Total</span><span className="font-bold text-primary text-lg">{selectedOrder.grandTotal}</span></div>
               </div>
 
-              {/* Customer & Delivery */}
+              {/* Customer / Dealer Details */}
               <div className="border-t pt-3">
-                <h3 className="text-sm font-semibold text-card-foreground mb-2">Customer & Delivery</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  {selectedOrder.customer.type === "Dealer" ? (
+                    <span className="flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+                      <svg className="h-4 w-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a4 4 0 0 0-8 0v2" /></svg>
+                      Dealer Details
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-sm font-semibold text-card-foreground">
+                      <svg className="h-4 w-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                      Customer Details
+                    </span>
+                  )}
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${selectedOrder.customer.type === "Dealer" ? "bg-indigo-500/15 text-indigo-400" : "bg-primary/10 text-primary"}`}>{selectedOrder.customer.type}</span>
+                </div>
+                <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
+                  {selectedOrder.customer.type === "Dealer" ? (
+                    <>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Business Name</span><span className="text-card-foreground font-medium">{selectedOrder.customer.businessName || "—"}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Contact Person</span><span className="text-card-foreground font-medium">{selectedOrder.customer.name}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-card-foreground">{selectedOrder.customer.email}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span className="text-card-foreground">{selectedOrder.customer.phone}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">UDYAM Number</span><span className="text-card-foreground">{selectedOrder.customer.udyamNumber || "—"}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span className="text-card-foreground text-right max-w-[200px]">{selectedOrder.customer.address || "—"}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">City</span><span className="text-card-foreground">{selectedOrder.customer.city || "—"}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Pincode</span><span className="text-card-foreground">{selectedOrder.customer.pincode || "—"}</span></div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Full Name</span><span className="text-card-foreground font-medium">{selectedOrder.customer.name}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Email Address</span><span className="text-card-foreground">{selectedOrder.customer.email}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Phone Number</span><span className="text-card-foreground">{selectedOrder.customer.phone}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Delivery Address</span><span className="text-card-foreground text-right max-w-[200px]">{selectedOrder.customer.deliveryAddress || "—"}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">City</span><span className="text-card-foreground">{selectedOrder.customer.city || "—"}</span></div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between"><span className="text-muted-foreground">Pincode</span><span className="text-card-foreground">{selectedOrder.customer.pincode || "—"}</span></div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Delivery Preferences */}
+              <div className="border-t pt-3">
+                <h3 className="text-sm font-semibold text-card-foreground mb-2">Delivery Preferences</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div><span className="text-muted-foreground">Name:</span><p className="font-medium text-card-foreground">{selectedOrder.customer.name}</p></div>
-                  <div><span className="text-muted-foreground">Type:</span><p><span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${selectedOrder.customer.type === "Dealer" ? "bg-indigo-500/15 text-indigo-400" : "bg-primary/10 text-primary"}`}>{selectedOrder.customer.type}</span></p></div>
-                  <div><span className="text-muted-foreground">Phone:</span><p className="font-medium text-card-foreground">{selectedOrder.customer.phone}</p></div>
-                  <div className="col-span-2"><span className="text-muted-foreground">Address:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.address}, {selectedOrder.deliveryAddress.landmark && `${selectedOrder.deliveryAddress.landmark}, `}{selectedOrder.deliveryAddress.city}, {selectedOrder.deliveryAddress.state} - {selectedOrder.deliveryAddress.pincode}</p></div>
+                  <div><span className="text-muted-foreground">Address:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.address}, {selectedOrder.deliveryAddress.landmark && `${selectedOrder.deliveryAddress.landmark}, `}{selectedOrder.deliveryAddress.city}, {selectedOrder.deliveryAddress.state} - {selectedOrder.deliveryAddress.pincode}</p></div>
                   <div><span className="text-muted-foreground">Type:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.addressType}</p></div>
                   <div><span className="text-muted-foreground">Preferred:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.preferredDate} • {selectedOrder.deliveryAddress.preferredTimeSlot}</p></div>
                   {selectedOrder.deliveryAddress.deliveryInstructions && (
