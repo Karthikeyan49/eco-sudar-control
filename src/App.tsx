@@ -16,6 +16,7 @@ import Invoices from "./pages/Invoices";
 import SettingsPage from "./pages/Settings";
 import Queries from "./pages/Queries";
 import FAQPage from "./pages/FAQ";
+import QuoteRequests from "./pages/QuoteRequests";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -41,6 +42,7 @@ function ProtectedRoutes() {
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/queries" element={<Queries />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route path="/quote-requests" element={<QuoteRequests />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
