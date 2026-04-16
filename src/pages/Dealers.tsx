@@ -57,8 +57,31 @@ export default function Dealers() {
     d.email.toLowerCase().includes(search.toLowerCase())
   );
 
+  const validateEmail = (email: string) => {
+    if (!email) return true; // email is optional
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePhone = (phone: string) => {
+    return /^[6-9]\d{9}$/.test(phone);
+  };
+
+  const validatePincode = (pincode: string) => {
+    if (!pincode) return true;
+    return /^\d{6}$/.test(pincode);
+  };
+
+  const validateForm = () => {
+    if (!form.contactPerson.trim()) { toast.error("Contact person is required"); return false; }
+    if (!validatePhone(form.phone)) { toast.error("Enter a valid 10-digit Indian phone number"); return false; }
+    if (form.email && !validateEmail(form.email)) { toast.error("Enter a valid email address"); return false; }
+    if (form.pincode && !validatePincode(form.pincode)) { toast.error("Pincode must be 6 digits"); return false; }
+    return true;
+  };
+
   const handleAdd = () => {
-    if (!form.contactPerson || !form.phone || !form.password) { toast.error("Contact person, phone & password are required"); return; }
+    if (!form.password) { toast.error("Password is required"); return; }
+    if (!validateForm()) return;
     const newDealer: Dealer = { ...form, id: Date.now() };
     setDealers([...dealers, newDealer]);
     setCreatedDealer({ name: form.contactPerson, email: form.email });
@@ -68,7 +91,7 @@ export default function Dealers() {
   };
 
   const handleEdit = () => {
-    if (!form.contactPerson || !form.phone) { toast.error("Contact person and phone are required"); return; }
+    if (!validateForm()) return;
     setDealers(dealers.map(d => d.id === form.id ? { ...d, contactPerson: form.contactPerson, businessName: form.businessName, email: form.email, phone: form.phone, udyamNumber: form.udyamNumber, address: form.address, city: form.city, pincode: form.pincode } : d));
     setEditOpen(false);
     toast.success(`Dealer "${form.contactPerson}" updated`);
