@@ -202,8 +202,41 @@ export default function Dealers() {
           <DialogFooter><DialogClose asChild><Button variant="outline">Close</Button></DialogClose></DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Credentials Sent Success Dialog */}
+      <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
+        <DialogContent className="max-w-sm text-center">
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <CheckCircle className="h-8 w-8 text-primary" />
+            </div>
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-center">Credentials Sent!</DialogTitle>
+              <DialogDescription className="text-center">
+                Login credentials for <span className="font-semibold text-card-foreground">{createdDealer?.name}</span> have been sent to:
+              </DialogDescription>
+            </DialogHeader>
+            <div className="w-full space-y-2 text-sm">
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2.5">
+                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Dealer Email</p>
+                  <p className="font-medium text-card-foreground">{createdDealer?.email || "Not provided"}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2.5">
+                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Admin Email</p>
+                  <p className="font-medium text-card-foreground">admin@ecosudar.com</p>
+                </div>
+              </div>
+            </div>
+            <Button onClick={() => setSuccessOpen(false)} className="w-full mt-2">Done</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-      <div className="bg-card rounded-xl border shadow-sm">
+
         <div className="p-4 border-b">
           <div className="relative w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
