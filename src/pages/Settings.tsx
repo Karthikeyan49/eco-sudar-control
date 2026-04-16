@@ -144,6 +144,55 @@ export default function SettingsPage() {
         <Button onClick={handleContactSave}>Update Contact Info</Button>
       </div>
 
+      {/* Savings Calculator Config */}
+      <div className="bg-card rounded-xl border p-6 shadow-sm space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-card-foreground">
+            <Calculator className="h-5 w-5" />
+            <h2 className="font-semibold">Savings Calculator (Mobile App)</h2>
+          </div>
+          <span className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full">Shown in app</span>
+        </div>
+        <p className="text-xs text-muted-foreground -mt-3">Configure default prices and fuel options for the Savings Calculator in the mobile app.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium text-card-foreground">Biomass Pellet Price (₹/kg)</label>
+            <Input type="number" value={calculator.pelletPrice} onChange={e => setCalculator(prev => ({ ...prev, pelletPrice: e.target.value }))} className="mt-1" />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-card-foreground">Conversion Factor (pellet kg per fuel kg)</label>
+            <Input type="number" step="0.01" value={calculator.conversionFactor} onChange={e => setCalculator(prev => ({ ...prev, conversionFactor: e.target.value }))} className="mt-1" />
+            <p className="text-xs text-muted-foreground mt-1">e.g. 2.83 means 100kg LPG ≈ 283kg pellets</p>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-card-foreground mb-3 block">Fuel Types & Default Prices</label>
+          <div className="space-y-3">
+            {calculator.fuels.map((fuel, i) => (
+              <div key={fuel.name} className="flex items-center gap-3 bg-muted/20 rounded-lg p-3">
+                <Switch checked={fuel.enabled} onCheckedChange={v => updateFuel(i, "enabled", v)} />
+                <div className="flex-1 grid grid-cols-3 gap-3 items-center">
+                  <span className={`text-sm font-medium ${fuel.enabled ? "text-card-foreground" : "text-muted-foreground"}`}>{fuel.name}</span>
+                  <div>
+                    <Input
+                      type="number"
+                      value={fuel.defaultPrice}
+                      onChange={e => updateFuel(i, "defaultPrice", e.target.value)}
+                      className="h-8 text-sm"
+                      disabled={!fuel.enabled}
+                    />
+                  </div>
+                  <span className="text-xs text-muted-foreground">₹{fuel.unit}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Button onClick={handleCalcSave}>Update Calculator Settings</Button>
+      </div>
+
       {/* Notifications */}
       <div className="bg-card rounded-xl border p-6 shadow-sm space-y-5">
         <div className="flex items-center gap-2 text-card-foreground">
