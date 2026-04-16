@@ -161,13 +161,15 @@ export default function Orders() {
   const [trackingInput, setTrackingInput] = useState("");
   const [paymentInput, setPaymentInput] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
+  const [filterType, setFilterType] = useState("All");
 
   const filtered = orders.filter(o => {
     const matchesSearch =
       o.id.toLowerCase().includes(search.toLowerCase()) ||
       o.customer.name.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filterStatus === "All" || o.status === filterStatus;
-    return matchesSearch && matchesFilter;
+    const matchesType = filterType === "All" || o.customer.type === filterType;
+    return matchesSearch && matchesFilter && matchesType;
   });
 
   const viewOrder = (o: Order) => {
