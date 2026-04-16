@@ -38,7 +38,13 @@ interface Order {
   deliveryAddress: DeliveryAddress;
   date: string;
   status: string;
-  customer: { name: string; phone: string; email: string; type: "Customer" | "Dealer" };
+  customer: {
+    name: string; phone: string; email: string; type: "Customer" | "Dealer";
+    // Customer fields
+    deliveryAddress?: string; city?: string; pincode?: string;
+    // Dealer fields
+    businessName?: string; udyamNumber?: string; address?: string;
+  };
   trackingNumber: string;
   paymentMethod: string;
   cancelReason: string;
