@@ -57,8 +57,31 @@ export default function Dealers() {
     d.email.toLowerCase().includes(search.toLowerCase())
   );
 
+  const validateEmail = (email: string) => {
+    if (!email) return true; // email is optional
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePhone = (phone: string) => {
+    return /^[6-9]\d{9}$/.test(phone);
+  };
+
+  const validatePincode = (pincode: string) => {
+    if (!pincode) return true;
+    return /^\d{6}$/.test(pincode);
+  };
+
+  const validateForm = () => {
+    if (!form.contactPerson.trim()) { toast.error("Contact person is required"); return false; }
+    if (!validatePhone(form.phone)) { toast.error("Enter a valid 10-digit Indian phone number"); return false; }
+    if (form.email && !validateEmail(form.email)) { toast.error("Enter a valid email address"); return false; }
+    if (form.pincode && !validatePincode(form.pincode)) { toast.error("Pincode must be 6 digits"); return false; }
+    return true;
+  };
+
   const handleAdd = () => {
-    if (!form.contactPerson || !form.phone || !form.password) { toast.error("Contact person, phone & password are required"); return; }
+    if (!form.password) { toast.error("Password is required"); return; }
+    if (!validateForm()) return;
     const newDealer: Dealer = { ...form, id: Date.now() };
     setDealers([...dealers, newDealer]);
     setCreatedDealer({ name: form.contactPerson, email: form.email });
@@ -68,7 +91,7 @@ export default function Dealers() {
   };
 
   const handleEdit = () => {
-    if (!form.contactPerson || !form.phone) { toast.error("Contact person and phone are required"); return; }
+    if (!validateForm()) return;
     setDealers(dealers.map(d => d.id === form.id ? { ...d, contactPerson: form.contactPerson, businessName: form.businessName, email: form.email, phone: form.phone, udyamNumber: form.udyamNumber, address: form.address, city: form.city, pincode: form.pincode } : d));
     setEditOpen(false);
     toast.success(`Dealer "${form.contactPerson}" updated`);
@@ -98,11 +121,13 @@ export default function Dealers() {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-sm font-medium text-card-foreground">Email</label>
-          <Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className="mt-1" />
+          <Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className={`mt-1 ${form.email && !validateEmail(form.email) ? "border-destructive" : ""}`} />
+          {form.email && !validateEmail(form.email) && <p className="text-xs text-destructive mt-1">Invalid email format</p>}
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Phone (Login ID) *</label>
-          <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="9876543210" className="mt-1" />
+          <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))} placeholder="9876543210" maxLength={10} className={`mt-1 ${form.phone && !validatePhone(form.phone) ? "border-destructive" : ""}`} />
+          {form.phone && !validatePhone(form.phone) && <p className="text-xs text-destructive mt-1">Must be 10 digits starting with 6-9</p>}
         </div>
       </div>
       <div>
@@ -120,7 +145,8 @@ export default function Dealers() {
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Pincode</label>
-          <Input value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))} placeholder="600001" className="mt-1" />
+          <Input value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value.replace(/\D/g, "").slice(0, 6) }))} placeholder="600001" maxLength={6} className={`mt-1 ${form.pincode && !validatePincode(form.pincode) ? "border-destructive" : ""}`} />
+          {form.pincode && !validatePincode(form.pincode) && <p className="text-xs text-destructive mt-1">Pincode must be 6 digits</p>}
         </div>
       </div>
       {showPassword && (
