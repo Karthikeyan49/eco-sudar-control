@@ -63,6 +63,8 @@ const statusColors: Record<string, string> = {
   Returned: "bg-purple-50 text-status-returned",
 };
 
+const paymentMethods = ["Pending", "COD", "UPI", "Online", "Net Banking", "Wallet"];
+
 const initialOrders: Order[] = [
   {
     id: "ES202604150028",
@@ -73,7 +75,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Rajesh Kumar", phone: "+91 98765 43210", address: "12 Industrial Estate", landmark: "Near Railway Station", city: "Chennai", state: "Tamil Nadu", pincode: "600001", addressType: "Office", preferredDate: "2024-03-18", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "Call before delivery" },
     date: "15/4/2026", status: "Pending",
     customer: { name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@greenindustries.com" },
-    trackingNumber: "", paymentMethod: "UPI", cancelReason: "", refundStatus: "N/A",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹130", gstAmount: "₹23.40", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹167",
   },
   {
@@ -84,7 +86,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Priya Sharma", phone: "+91 87654 32109", address: "45 Green Park Colony", landmark: "Opposite Mall", city: "Bangalore", state: "Karnataka", pincode: "560001", addressType: "Home", preferredDate: "2024-03-17", preferredTimeSlot: "2 PM - 6 PM", deliveryInstructions: "" },
     date: "15/4/2026", status: "Pending",
     customer: { name: "Priya Sharma", phone: "+91 87654 32109", email: "priya@ecoheat.in" },
-    trackingNumber: "", paymentMethod: "COD", cancelReason: "", refundStatus: "N/A",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹100", gstAmount: "₹18", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹167",
   },
   {
@@ -95,7 +97,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Anand Patel", phone: "+91 76543 21098", address: "78 GIDC Industrial Area", landmark: "Near Water Tank", city: "Ahmedabad", state: "Gujarat", pincode: "380001", addressType: "Office", preferredDate: "2024-03-20", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "Heavy load - forklift needed" },
     date: "15/4/2026", status: "Pending",
     customer: { name: "Anand Patel", phone: "+91 76543 21098", email: "anand@biomasstrading.com" },
-    trackingNumber: "", paymentMethod: "Online", cancelReason: "", refundStatus: "N/A",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹68", gstAmount: "₹12.24", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹158.50",
   },
   {
@@ -128,7 +130,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Kavitha R", phone: "+91 99887 76655", address: "10 Anna Nagar", landmark: "", city: "Madurai", state: "Tamil Nadu", pincode: "625001", addressType: "Home", preferredDate: "2024-03-10", preferredTimeSlot: "2 PM - 6 PM", deliveryInstructions: "" },
     date: "12/4/2026", status: "Cancelled",
     customer: { name: "Kavitha R", phone: "+91 99887 76655", email: "kavitha@gmail.com" },
-    trackingNumber: "", paymentMethod: "Online", cancelReason: "Customer request - changed mind", refundStatus: "Initiated",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "Customer request - changed mind", refundStatus: "Initiated",
     subtotal: "₹40,000", gstAmount: "₹7,200", deliveryFee: "₹2,000", discount: "₹0", grandTotal: "₹49,200",
   },
   {
@@ -151,6 +153,7 @@ export default function Orders() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [trackingInput, setTrackingInput] = useState("");
+  const [paymentInput, setPaymentInput] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
 
   const filtered = orders.filter(o => {
@@ -164,6 +167,7 @@ export default function Orders() {
   const viewOrder = (o: Order) => {
     setSelectedOrder({ ...o });
     setTrackingInput(o.trackingNumber);
+    setPaymentInput(o.paymentMethod);
     setCancelReason("");
     setDetailOpen(true);
   };
@@ -272,7 +276,25 @@ export default function Orders() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-muted-foreground">Payment Method:</span>
-                    <p><span className="inline-block mt-1 text-xs px-2.5 py-0.5 rounded-full bg-muted font-medium text-card-foreground">{selectedOrder.paymentMethod}</span></p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Select value={paymentInput} onValueChange={v => setPaymentInput(v)}>
+                        <SelectTrigger className="h-8 text-sm w-40"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {paymentMethods.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      {paymentInput !== selectedOrder.paymentMethod && (
+                        <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => {
+                          const updated = { ...selectedOrder, paymentMethod: paymentInput };
+                          setOrders(orders.map(o => o.id === selectedOrder.id ? updated : o));
+                          setSelectedOrder(updated);
+                          toast.success(`Payment method set to ${paymentInput}`);
+                        }}>Save</Button>
+                      )}
+                    </div>
+                    {selectedOrder.paymentMethod === "Pending" && (
+                      <p className="text-xs text-amber-400 mt-1">⚠ Contact customer to confirm payment method</p>
+                    )}
                   </div>
                   {(selectedOrder.status === "Shipped" || selectedOrder.status === "Out for Delivery") && (
                     <div>
@@ -368,7 +390,12 @@ export default function Orders() {
                   <td className="px-6 py-4 text-sm text-card-foreground">{o.customer.name}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{o.items.length} item(s) — {o.grandTotal}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{o.date}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{o.paymentMethod}</td>
+                  <td className="px-6 py-4 text-sm">
+                    {o.paymentMethod === "Pending" 
+                      ? <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-medium">Pending</span>
+                      : <span className="text-muted-foreground">{o.paymentMethod}</span>
+                    }
+                  </td>
                   <td className="px-6 py-4">
                     <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[o.status] || "bg-muted text-muted-foreground"}`}>{o.status}</span>
                   </td>
