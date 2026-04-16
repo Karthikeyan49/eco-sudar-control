@@ -1,4 +1,4 @@
-import { Search, Plus, Edit, Trash2, Key, Eye } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Key, Eye, Mail, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -45,6 +45,8 @@ export default function Dealers() {
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [createdDealer, setCreatedDealer] = useState<{ name: string; email: string } | null>(null);
   const [viewDealer, setViewDealer] = useState<Dealer | null>(null);
   const [form, setForm] = useState({ ...emptyDealer });
 
@@ -59,9 +61,10 @@ export default function Dealers() {
     if (!form.contactPerson || !form.phone || !form.password) { toast.error("Contact person, phone & password are required"); return; }
     const newDealer: Dealer = { ...form, id: Date.now() };
     setDealers([...dealers, newDealer]);
+    setCreatedDealer({ name: form.contactPerson, email: form.email });
     setForm({ ...emptyDealer });
     setAddOpen(false);
-    toast.success(`Dealer "${form.contactPerson}" created with phone login`);
+    setSuccessOpen(true);
   };
 
   const handleEdit = () => {
@@ -197,6 +200,39 @@ export default function Dealers() {
             </div>
           )}
           <DialogFooter><DialogClose asChild><Button variant="outline">Close</Button></DialogClose></DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Credentials Sent Success Dialog */}
+      <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
+        <DialogContent className="max-w-sm text-center">
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <CheckCircle className="h-8 w-8 text-primary" />
+            </div>
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-center">Credentials Sent!</DialogTitle>
+              <DialogDescription className="text-center">
+                Login credentials for <span className="font-semibold text-card-foreground">{createdDealer?.name}</span> have been sent to:
+              </DialogDescription>
+            </DialogHeader>
+            <div className="w-full space-y-2 text-sm">
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2.5">
+                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Dealer Email</p>
+                  <p className="font-medium text-card-foreground">{createdDealer?.email || "Not provided"}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2.5">
+                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Admin Email</p>
+                  <p className="font-medium text-card-foreground">admin@ecosudar.com</p>
+                </div>
+              </div>
+            </div>
+            <Button onClick={() => setSuccessOpen(false)} className="w-full mt-2">Done</Button>
+          </div>
         </DialogContent>
       </Dialog>
 
