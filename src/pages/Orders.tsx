@@ -161,13 +161,15 @@ export default function Orders() {
   const [trackingInput, setTrackingInput] = useState("");
   const [paymentInput, setPaymentInput] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
+  const [filterType, setFilterType] = useState("All");
 
   const filtered = orders.filter(o => {
     const matchesSearch =
       o.id.toLowerCase().includes(search.toLowerCase()) ||
       o.customer.name.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filterStatus === "All" || o.status === filterStatus;
-    return matchesSearch && matchesFilter;
+    const matchesType = filterType === "All" || o.customer.type === filterType;
+    return matchesSearch && matchesFilter && matchesType;
   });
 
   const viewOrder = (o: Order) => {
@@ -396,16 +398,29 @@ export default function Orders() {
       </Dialog>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2">
-        {["All", ...statusFlow].map(s => (
-          <button
-            key={s}
-            onClick={() => setFilterStatus(s)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${filterStatus === s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
-          >
-            {s}
-          </button>
-        ))}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
+          {["All", "Customer", "Dealer"].map(t => (
+            <button
+              key={t}
+              onClick={() => setFilterType(t)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${filterType === t ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {["All", ...statusFlow].map(s => (
+            <button
+              key={s}
+              onClick={() => setFilterStatus(s)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${filterStatus === s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="bg-card rounded-xl border shadow-sm">
