@@ -219,54 +219,56 @@ export default function Products() {
     }));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      if (img.width !== 300 || img.height !== 300) {
+        toast.error(`Image must be 300×300 pixels. Uploaded image is ${img.width}×${img.height}.`);
+        URL.revokeObjectURL(url);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm(f => ({ ...f, imageUrl: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  };
+
   const renderForm = (onSubmit: () => void, submitLabel: string) => (
     <div className="space-y-4 py-2 max-h-[65vh] overflow-y-auto pr-1">
-      {form.imageUrl && (
-        <div className="flex items-center gap-3">
-          <img src={form.imageUrl} alt="Product" className="h-16 w-16 rounded-lg object-cover border" />
-          <span className="text-sm text-muted-foreground">Product Image</span>
-        </div>
-      )}
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Product Name *</label>
-          <Input value={form.product} onChange={e => setForm(f => ({ ...f, product: e.target.value }))} placeholder="e.g. Biomass Pellets" className="mt-1" />
-        </div>
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Category *</label>
-          <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
-            <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {productCategories.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
       <div>
-        <label className="text-sm font-medium text-card-foreground">Description</label>
-        <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Product description for app..." className="mt-1" rows={2} />
-      </div>
-
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Stock</label>
-          <Input type="number" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: parseInt(e.target.value) || 0 }))} className="mt-1" />
+        <label className="text-sm font-medium text-card-foreground">Product Image (300 × 300 px)</label>
+        <div className="flex items-center gap-4 mt-1">
+          {form.imageUrl ? (
+            <div className="relative group">
+              <img src={form.imageUrl} alt="Product" className="h-20 w-20 rounded-lg object-cover border border-border" />
+              <button
+                type="button"
+                onClick={() => setForm(f => ({ ...f, imageUrl: "" }))}
+                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <label className="flex flex-col items-center justify-center h-20 w-20 rounded-lg border-2 border-dashed border-muted-foreground/30 cursor-pointer hover:border-primary/50 transition-colors">
+              <Plus className="h-5 w-5 text-muted-foreground" />
+              <span className="text-[10px] text-muted-foreground mt-0.5">Upload</span>
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            </label>
+          )}
+          <p className="text-xs text-muted-foreground">Upload a 300×300 pixel image.<br />JPG, PNG or WebP.</p>
         </div>
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Min Order Qty</label>
-          <Input type="number" value={form.minOrderQty} onChange={e => setForm(f => ({ ...f, minOrderQty: parseInt(e.target.value) || 1 }))} className="mt-1" />
-        </div>
-        <div>
-          <label className="text-sm font-medium text-card-foreground">Delivery Fee</label>
-          <Input value={form.deliveryFee} onChange={e => setForm(f => ({ ...f, deliveryFee: e.target.value }))} placeholder="₹150" className="mt-1" />
-        </div>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-card-foreground">Image URL</label>
-        <Input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." className="mt-1" />
       </div>
 
       {/* Sizes & Prices */}
