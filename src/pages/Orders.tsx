@@ -276,7 +276,25 @@ export default function Orders() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-muted-foreground">Payment Method:</span>
-                    <p><span className="inline-block mt-1 text-xs px-2.5 py-0.5 rounded-full bg-muted font-medium text-card-foreground">{selectedOrder.paymentMethod}</span></p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Select value={paymentInput} onValueChange={v => setPaymentInput(v)}>
+                        <SelectTrigger className="h-8 text-sm w-40"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {paymentMethods.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      {paymentInput !== selectedOrder.paymentMethod && (
+                        <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => {
+                          const updated = { ...selectedOrder, paymentMethod: paymentInput };
+                          setOrders(orders.map(o => o.id === selectedOrder.id ? updated : o));
+                          setSelectedOrder(updated);
+                          toast.success(`Payment method set to ${paymentInput}`);
+                        }}>Save</Button>
+                      )}
+                    </div>
+                    {selectedOrder.paymentMethod === "Pending" && (
+                      <p className="text-xs text-amber-400 mt-1">⚠ Contact customer to confirm payment method</p>
+                    )}
                   </div>
                   {(selectedOrder.status === "Shipped" || selectedOrder.status === "Out for Delivery") && (
                     <div>
