@@ -145,7 +145,8 @@ export default function Dealers() {
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Pincode</label>
-          <Input value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))} placeholder="600001" className="mt-1" />
+          <Input value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value.replace(/\D/g, "").slice(0, 6) }))} placeholder="600001" maxLength={6} className={`mt-1 ${form.pincode && !validatePincode(form.pincode) ? "border-destructive" : ""}`} />
+          {form.pincode && !validatePincode(form.pincode) && <p className="text-xs text-destructive mt-1">Pincode must be 6 digits</p>}
         </div>
       </div>
       {showPassword && (
