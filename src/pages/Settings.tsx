@@ -1,4 +1,4 @@
-import { User, Bell, Mail, Phone, MapPin } from "lucide-react";
+import { User, Bell, Mail, Phone, MapPin, Calculator, Fuel } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,17 @@ export default function SettingsPage() {
     address: "49/D, EB Avenue, Kanchipuram, Tamil Nadu, India - 631502",
   });
 
+  const [calculator, setCalculator] = useState({
+    pelletPrice: "14",
+    conversionFactor: "2.83",
+    fuels: [
+      { name: "LPG", unit: "/kg", defaultPrice: "85", enabled: true },
+      { name: "Diesel", unit: "/L", defaultPrice: "92", enabled: true },
+      { name: "Coal", unit: "/kg", defaultPrice: "12", enabled: true },
+      { name: "Firewood", unit: "/kg", defaultPrice: "8", enabled: true },
+    ],
+  });
+
   const [notifications, setNotifications] = useState([
     { title: "New order notifications", desc: "Get notified when a new order is placed", on: true },
     { title: "Low stock alerts", desc: "Alert when raw materials fall below threshold", on: true },
@@ -38,6 +49,21 @@ export default function SettingsPage() {
       return;
     }
     toast.success("Contact Us details updated — changes will reflect in the mobile app");
+  };
+
+  const handleCalcSave = () => {
+    if (!calculator.pelletPrice || !calculator.conversionFactor) {
+      toast.error("Pellet price and conversion factor are required");
+      return;
+    }
+    toast.success("Savings Calculator settings updated — changes will reflect in the mobile app");
+  };
+
+  const updateFuel = (index: number, field: string, value: string | boolean) => {
+    setCalculator(prev => ({
+      ...prev,
+      fuels: prev.fuels.map((f, i) => i === index ? { ...f, [field]: value } : f),
+    }));
   };
 
   const toggleNotification = (index: number) => {
