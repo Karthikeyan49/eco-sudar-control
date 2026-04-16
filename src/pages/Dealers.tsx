@@ -1,4 +1,4 @@
-import { Search, Plus, Edit, Trash2, Key, Eye } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Key, Eye, Mail, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
