@@ -62,7 +62,7 @@ const initialProducts: Product[] = [
       "Commercial Kitchen": ["Restaurant Kitchen", "Hotel Kitchen", "Catering Service", "Food Court", "Canteen", "Custom"],
       "Industrial Dryer": ["Textile Dryer", "Food Processing Dryer", "Pharmaceutical Dryer", "Chemical Dryer", "Agricultural Dryer", "Custom"],
     },
-    deliveryFee: "₹800", description: "Efficient biomass cooking stoves for home and commercial kitchens",
+    description: "Efficient biomass cooking stoves for home and commercial kitchens",
     category: "Biomass Stove", stock: 45, minOrderQty: 1, imageUrl: ""
   },
   {
@@ -73,7 +73,7 @@ const initialProducts: Product[] = [
       "Commercial Kitchen": ["Restaurant Kitchen", "Hotel Kitchen", "Catering Service", "Food Court", "Canteen", "Custom"],
       "Industrial Dryer": ["Textile Dryer", "Food Processing Dryer", "Pharmaceutical Dryer", "Chemical Dryer", "Agricultural Dryer", "Custom"],
     },
-    deliveryFee: "₹2,000", description: "Industrial biomass burners for heating and steam generation",
+    description: "Industrial biomass burners for heating and steam generation",
     category: "Biomass Burner", stock: 12, minOrderQty: 1, imageUrl: ""
   },
 ];
@@ -87,7 +87,7 @@ interface FormState {
   newPurpose: string;
   newSubPurpose: string;
   activePurposeForSub: string;
-  deliveryFee: string;
+  
   description: string;
   category: string;
   stock: number;
@@ -98,7 +98,6 @@ interface FormState {
 const emptyForm: FormState = {
   id: 0, product: "", sizes: [{ size: "", price: "" }], purposes: [], subPurposes: {},
   newPurpose: "", newSubPurpose: "", activePurposeForSub: "",
-  deliveryFee: "", description: "", category: "Pellets", stock: 0, minOrderQty: 1, imageUrl: ""
 };
 
 function StockBadge({ stock }: { stock: number }) {
@@ -124,7 +123,7 @@ export default function Products() {
     if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
     const newProduct: Product = {
       id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes,
-      subPurposes: form.subPurposes, deliveryFee: form.deliveryFee, description: form.description,
+      subPurposes: form.subPurposes, description: form.description,
       category: form.category, stock: form.stock, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl
     };
     setProducts([...products, newProduct]);
@@ -138,7 +137,7 @@ export default function Products() {
     if (!form.product || validSizes.length === 0) { toast.error("Product and at least one size with price required"); return; }
     const updated: Product = {
       id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes,
-      subPurposes: form.subPurposes, deliveryFee: form.deliveryFee, description: form.description,
+      subPurposes: form.subPurposes, description: form.description,
       category: form.category, stock: form.stock, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl
     };
     setProducts(products.map(p => p.id === form.id ? updated : p));
@@ -156,7 +155,7 @@ export default function Products() {
       id: p.id, product: p.product, sizes: [...p.sizes], purposes: [...p.purposes],
       subPurposes: JSON.parse(JSON.stringify(p.subPurposes)),
       newPurpose: "", newSubPurpose: "", activePurposeForSub: p.purposes[0] || "",
-      deliveryFee: p.deliveryFee, description: p.description, category: p.category,
+      description: p.description, category: p.category,
       stock: p.stock, minOrderQty: p.minOrderQty, imageUrl: p.imageUrl
     });
     setEditOpen(true);
@@ -414,7 +413,7 @@ export default function Products() {
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes & Prices</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Purposes</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Stock</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Delivery Fee</th>
+                
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
@@ -454,7 +453,7 @@ export default function Products() {
                     </div>
                   </td>
                   <td className="px-6 py-4"><StockBadge stock={p.stock} /></td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{p.deliveryFee}</td>
+                  
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-muted rounded-lg mr-1"><Edit className="h-4 w-4 text-muted-foreground" /></button>
                     <AlertDialog>
