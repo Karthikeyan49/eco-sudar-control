@@ -38,7 +38,7 @@ interface Order {
   deliveryAddress: DeliveryAddress;
   date: string;
   status: string;
-  customer: { name: string; phone: string; email: string };
+  customer: { name: string; phone: string; email: string; type: "Customer" | "Dealer" };
   trackingNumber: string;
   paymentMethod: string;
   cancelReason: string;
@@ -74,7 +74,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Rajesh Kumar", phone: "+91 98765 43210", address: "12 Industrial Estate", landmark: "Near Railway Station", city: "Chennai", state: "Tamil Nadu", pincode: "600001", addressType: "Office", preferredDate: "2024-03-18", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "Call before delivery" },
     date: "15/4/2026", status: "Pending",
-    customer: { name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@greenindustries.com" },
+    customer: { name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@greenindustries.com", type: "Customer" },
     trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹130", gstAmount: "₹23.40", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹167",
   },
@@ -85,7 +85,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Priya Sharma", phone: "+91 87654 32109", address: "45 Green Park Colony", landmark: "Opposite Mall", city: "Bangalore", state: "Karnataka", pincode: "560001", addressType: "Home", preferredDate: "2024-03-17", preferredTimeSlot: "2 PM - 6 PM", deliveryInstructions: "" },
     date: "15/4/2026", status: "Pending",
-    customer: { name: "Priya Sharma", phone: "+91 87654 32109", email: "priya@ecoheat.in" },
+    customer: { name: "Priya Sharma", phone: "+91 87654 32109", email: "priya@ecoheat.in", type: "Customer" },
     trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹100", gstAmount: "₹18", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹167",
   },
@@ -96,7 +96,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Anand Patel", phone: "+91 76543 21098", address: "78 GIDC Industrial Area", landmark: "Near Water Tank", city: "Ahmedabad", state: "Gujarat", pincode: "380001", addressType: "Office", preferredDate: "2024-03-20", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "Heavy load - forklift needed" },
     date: "15/4/2026", status: "Pending",
-    customer: { name: "Anand Patel", phone: "+91 76543 21098", email: "anand@biomasstrading.com" },
+    customer: { name: "Anand Patel", phone: "+91 76543 21098", email: "anand@biomasstrading.com", type: "Dealer" },
     trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹68", gstAmount: "₹12.24", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹158.50",
   },
@@ -107,7 +107,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Meena Devi", phone: "+91 65432 10987", address: "Village Rampur", landmark: "Near Panchayat Office", city: "Kanchipuram", state: "Tamil Nadu", pincode: "631502", addressType: "Home", preferredDate: "2024-03-19", preferredTimeSlot: "6 PM - 9 PM", deliveryInstructions: "" },
     date: "14/4/2026", status: "Confirmed",
-    customer: { name: "Meena Devi", phone: "+91 65432 10987", email: "meena@ruralenergy.in" },
+    customer: { name: "Meena Devi", phone: "+91 65432 10987", email: "meena@ruralenergy.in", type: "Customer" },
     trackingNumber: "", paymentMethod: "COD", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹6,500", gstAmount: "₹1,170", deliveryFee: "₹800", discount: "₹200", grandTotal: "₹8,270",
   },
@@ -118,7 +118,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Suresh Babu", phone: "+91 54321 09876", address: "22 Tech Park Road", landmark: "", city: "Hyderabad", state: "Telangana", pincode: "500001", addressType: "Office", preferredDate: "2024-03-22", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "" },
     date: "13/4/2026", status: "Shipped",
-    customer: { name: "Suresh Babu", phone: "+91 54321 09876", email: "suresh@biofuelcorp.com" },
+    customer: { name: "Suresh Babu", phone: "+91 54321 09876", email: "suresh@biofuelcorp.com", type: "Dealer" },
     trackingNumber: "TRK-1234567890", paymentMethod: "UPI", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹425", gstAmount: "₹76.50", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹651.50",
   },
@@ -129,7 +129,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Kavitha R", phone: "+91 99887 76655", address: "10 Anna Nagar", landmark: "", city: "Madurai", state: "Tamil Nadu", pincode: "625001", addressType: "Home", preferredDate: "2024-03-10", preferredTimeSlot: "2 PM - 6 PM", deliveryInstructions: "" },
     date: "12/4/2026", status: "Cancelled",
-    customer: { name: "Kavitha R", phone: "+91 99887 76655", email: "kavitha@gmail.com" },
+    customer: { name: "Kavitha R", phone: "+91 99887 76655", email: "kavitha@gmail.com", type: "Customer" },
     trackingNumber: "", paymentMethod: "Pending", cancelReason: "Customer request - changed mind", refundStatus: "Initiated",
     subtotal: "₹40,000", gstAmount: "₹7,200", deliveryFee: "₹2,000", discount: "₹0", grandTotal: "₹49,200",
   },
@@ -140,7 +140,7 @@ const initialOrders: Order[] = [
     ],
     deliveryAddress: { name: "Mohan Das", phone: "+91 88776 65544", address: "56 Factory Lane", landmark: "Behind Bus Stand", city: "Coimbatore", state: "Tamil Nadu", pincode: "641001", addressType: "Office", preferredDate: "2024-03-05", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "" },
     date: "10/4/2026", status: "Delivered",
-    customer: { name: "Mohan Das", phone: "+91 88776 65544", email: "mohan@factory.com" },
+    customer: { name: "Mohan Das", phone: "+91 88776 65544", email: "mohan@factory.com", type: "Dealer" },
     trackingNumber: "TRK-5556667778", paymentMethod: "Net Banking", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹16,000", gstAmount: "₹2,880", deliveryFee: "₹800", discount: "₹500", grandTotal: "₹19,180",
   },
@@ -260,6 +260,7 @@ export default function Orders() {
                 <h3 className="text-sm font-semibold text-card-foreground mb-2">Customer & Delivery</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div><span className="text-muted-foreground">Name:</span><p className="font-medium text-card-foreground">{selectedOrder.customer.name}</p></div>
+                  <div><span className="text-muted-foreground">Type:</span><p><span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${selectedOrder.customer.type === "Dealer" ? "bg-indigo-500/15 text-indigo-400" : "bg-primary/10 text-primary"}`}>{selectedOrder.customer.type}</span></p></div>
                   <div><span className="text-muted-foreground">Phone:</span><p className="font-medium text-card-foreground">{selectedOrder.customer.phone}</p></div>
                   <div className="col-span-2"><span className="text-muted-foreground">Address:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.address}, {selectedOrder.deliveryAddress.landmark && `${selectedOrder.deliveryAddress.landmark}, `}{selectedOrder.deliveryAddress.city}, {selectedOrder.deliveryAddress.state} - {selectedOrder.deliveryAddress.pincode}</p></div>
                   <div><span className="text-muted-foreground">Type:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.addressType}</p></div>
@@ -387,7 +388,10 @@ export default function Orders() {
               {filtered.map((o) => (
                 <tr key={o.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-6 py-4 text-sm font-medium text-primary">{o.id}</td>
-                  <td className="px-6 py-4 text-sm text-card-foreground">{o.customer.name}</td>
+                  <td className="px-6 py-4">
+                    <span className="text-sm text-card-foreground">{o.customer.name}</span>
+                    <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded font-medium ${o.customer.type === "Dealer" ? "bg-indigo-500/15 text-indigo-400" : "bg-primary/10 text-primary"}`}>{o.customer.type}</span>
+                  </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{o.items.length} item(s) — {o.grandTotal}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{o.date}</td>
                   <td className="px-6 py-4 text-sm">
