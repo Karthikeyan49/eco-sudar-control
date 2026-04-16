@@ -387,7 +387,10 @@ export default function Orders() {
               {filtered.map((o) => (
                 <tr key={o.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-6 py-4 text-sm font-medium text-primary">{o.id}</td>
-                  <td className="px-6 py-4 text-sm text-card-foreground">{o.customer.name}</td>
+                  <td className="px-6 py-4">
+                    <span className="text-sm text-card-foreground">{o.customer.name}</span>
+                    <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded font-medium ${o.customer.type === "Dealer" ? "bg-indigo-500/15 text-indigo-400" : "bg-primary/10 text-primary"}`}>{o.customer.type}</span>
+                  </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{o.items.length} item(s) — {o.grandTotal}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{o.date}</td>
                   <td className="px-6 py-4 text-sm">
