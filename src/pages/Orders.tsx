@@ -38,7 +38,7 @@ interface Order {
   deliveryAddress: DeliveryAddress;
   date: string;
   status: string;
-  customer: { name: string; phone: string; email: string };
+  customer: { name: string; phone: string; email: string; type: "Customer" | "Dealer" };
   trackingNumber: string;
   paymentMethod: string;
   cancelReason: string;
