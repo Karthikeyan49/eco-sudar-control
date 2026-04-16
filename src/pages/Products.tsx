@@ -98,6 +98,7 @@ interface FormState {
 const emptyForm: FormState = {
   id: 0, product: "", sizes: [{ size: "", price: "" }], purposes: [], subPurposes: {},
   newPurpose: "", newSubPurpose: "", activePurposeForSub: "",
+  description: "", category: "Pellets", stock: 0, minOrderQty: 1, imageUrl: ""
 };
 
 function StockBadge({ stock }: { stock: number }) {
