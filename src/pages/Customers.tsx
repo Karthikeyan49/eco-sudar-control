@@ -11,23 +11,18 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface SavedAddress {
-  type: "Home" | "Office" | "Other";
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-  isDefault: boolean;
-}
+import { Badge } from "@/components/ui/badge";
 
 interface Customer {
   name: string;
   phone: string;
   email: string;
+  userType: "Customer" | "Dealer";
+  deliveryAddress: string;
+  city: string;
+  pincode: string;
   orders: number;
   lastOrder: string;
-  savedAddresses: SavedAddress[];
   totalSpent: string;
   cancelledOrders: number;
   accountCreatedDate: string;
@@ -37,47 +32,36 @@ interface Customer {
 
 const customers: Customer[] = [
   {
-    name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@greenindustries.com", orders: 12, lastOrder: "2024-03-15",
-    savedAddresses: [
-      { type: "Office", address: "12 Industrial Estate, Anna Salai", city: "Chennai", state: "Tamil Nadu", pincode: "600001", isDefault: true },
-      { type: "Home", address: "45 2nd Cross Street, Adyar", city: "Chennai", state: "Tamil Nadu", pincode: "600020", isDefault: false },
-    ],
-    totalSpent: "₹1,85,000", cancelledOrders: 1, accountCreatedDate: "2023-06-15", activeOrders: 2, deliveredOrders: 9,
+    name: "Rajesh Kumar", phone: "9876543210", email: "rajesh@greenindustries.com",
+    userType: "Customer", deliveryAddress: "12 Industrial Estate, Anna Salai", city: "Chennai", pincode: "600001",
+    orders: 12, lastOrder: "15/4/2026", totalSpent: "₹1,85,000", cancelledOrders: 1,
+    accountCreatedDate: "15/6/2023", activeOrders: 2, deliveredOrders: 9,
   },
   {
-    name: "Priya Sharma", phone: "+91 87654 32109", email: "priya@ecoheat.in", orders: 8, lastOrder: "2024-03-14",
-    savedAddresses: [
-      { type: "Office", address: "45 Green Park Colony", city: "Bangalore", state: "Karnataka", pincode: "560001", isDefault: true },
-    ],
-    totalSpent: "₹92,000", cancelledOrders: 0, accountCreatedDate: "2023-09-20", activeOrders: 1, deliveredOrders: 7,
+    name: "Priya Sharma", phone: "8765432109", email: "priya@ecoheat.in",
+    userType: "Customer", deliveryAddress: "45 Green Park Colony", city: "Bangalore", pincode: "560001",
+    orders: 8, lastOrder: "14/4/2026", totalSpent: "₹92,000", cancelledOrders: 0,
+    accountCreatedDate: "20/9/2023", activeOrders: 1, deliveredOrders: 7,
   },
   {
-    name: "Anand Patel", phone: "+91 76543 21098", email: "anand@biomasstrading.com", orders: 15, lastOrder: "2024-03-13",
-    savedAddresses: [
-      { type: "Office", address: "78 GIDC Industrial Area", city: "Ahmedabad", state: "Gujarat", pincode: "380001", isDefault: true },
-      { type: "Home", address: "12 Satellite Road", city: "Ahmedabad", state: "Gujarat", pincode: "380015", isDefault: false },
-    ],
-    totalSpent: "₹3,20,000", cancelledOrders: 2, accountCreatedDate: "2023-04-10", activeOrders: 3, deliveredOrders: 10,
+    name: "Anand Patel", phone: "7654321098", email: "anand@biomasstrading.com",
+    userType: "Customer", deliveryAddress: "78 GIDC Industrial Area", city: "Ahmedabad", pincode: "380001",
+    orders: 15, lastOrder: "13/4/2026", totalSpent: "₹3,20,000", cancelledOrders: 2,
+    accountCreatedDate: "10/4/2023", activeOrders: 3, deliveredOrders: 10,
   },
   {
-    name: "Meena Devi", phone: "+91 65432 10987", email: "meena@ruralenergy.in", orders: 5, lastOrder: "2024-03-12",
-    savedAddresses: [
-      { type: "Home", address: "Village Rampur", city: "Jaipur", state: "Rajasthan", pincode: "302001", isDefault: true },
-    ],
-    totalSpent: "₹45,000", cancelledOrders: 0, accountCreatedDate: "2024-01-05", activeOrders: 1, deliveredOrders: 4,
+    name: "naresh", phone: "8610623077", email: "rnaresh31122002@gmail.com",
+    userType: "Customer", deliveryAddress: "—", city: "—", pincode: "—",
+    orders: 3, lastOrder: "15/4/2026", totalSpent: "₹492.50", cancelledOrders: 0,
+    accountCreatedDate: "15/4/2026", activeOrders: 3, deliveredOrders: 0,
   },
   {
-    name: "Suresh Babu", phone: "+91 54321 09876", email: "suresh@biofuelcorp.com", orders: 22, lastOrder: "2024-03-11",
-    savedAddresses: [
-      { type: "Office", address: "22 Tech Park Road", city: "Hyderabad", state: "Telangana", pincode: "500001", isDefault: true },
-      { type: "Home", address: "5 Jubilee Hills", city: "Hyderabad", state: "Telangana", pincode: "500033", isDefault: false },
-      { type: "Other", address: "Warehouse 8, Outer Ring Road", city: "Hyderabad", state: "Telangana", pincode: "500082", isDefault: false },
-    ],
-    totalSpent: "₹5,50,000", cancelledOrders: 3, accountCreatedDate: "2023-02-28", activeOrders: 2, deliveredOrders: 17,
+    name: "Meena Devi", phone: "6543210987", email: "meena@ruralenergy.in",
+    userType: "Customer", deliveryAddress: "Village Rampur", city: "Jaipur", pincode: "302001",
+    orders: 5, lastOrder: "12/4/2026", totalSpent: "₹45,000", cancelledOrders: 0,
+    accountCreatedDate: "5/1/2024", activeOrders: 1, deliveredOrders: 4,
   },
 ];
-
-const addressTypeIcon = { Home: Home, Office: Briefcase, Other: MapPin };
 
 export default function Customers() {
   const [search, setSearch] = useState("");
@@ -102,30 +86,42 @@ export default function Customers() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Customers</h1>
-        <p className="text-muted-foreground">Users registered via mobile app</p>
+        <p className="text-muted-foreground">Users registered as "Customer" in the mobile app</p>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
-            <DialogDescription>App-registered customer information.</DialogDescription>
+            <DialogDescription>Profile filled by user in the mobile app</DialogDescription>
           </DialogHeader>
           {selected && (
             <Tabs defaultValue="profile" className="mt-2">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="addresses">Addresses</TabsTrigger>
                 <TabsTrigger value="stats">Order Stats</TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile" className="space-y-3 py-2">
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div><span className="text-muted-foreground">Name:</span><p className="font-medium text-card-foreground">{selected.name}</p></div>
-                  <div><span className="text-muted-foreground">Phone:</span><p className="font-medium text-card-foreground">{selected.phone}</p></div>
-                  <div><span className="text-muted-foreground">Email:</span><p className="font-medium text-card-foreground">{selected.email}</p></div>
-                  <div><span className="text-muted-foreground">Account Created:</span><p className="font-medium text-card-foreground">{selected.accountCreatedDate}</p></div>
-                  <div><span className="text-muted-foreground">User Type:</span><p className="font-medium text-card-foreground">Customer</p></div>
+                <div className="bg-muted/30 rounded-lg p-4 space-y-2.5 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">User Type</span>
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">Customer</Badge>
+                  </div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">Full Name</span><span className="text-card-foreground font-medium">{selected.name}</span></div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">Email Address</span><span className="text-card-foreground">{selected.email}</span></div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">Phone Number</span><span className="text-card-foreground">{selected.phone}</span></div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">Delivery Address</span><span className="text-card-foreground text-right max-w-[200px]">{selected.deliveryAddress}</span></div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">City</span><span className="text-card-foreground">{selected.city}</span></div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">Pincode</span><span className="text-card-foreground">{selected.pincode}</span></div>
+                  <div className="border-t border-border" />
+                  <div className="flex justify-between"><span className="text-muted-foreground">Account Created</span><span className="text-card-foreground">{selected.accountCreatedDate}</span></div>
                 </div>
                 <div className="pt-2">
                   <AlertDialog>
@@ -144,24 +140,6 @@ export default function Customers() {
                     </AlertDialogContent>
                   </AlertDialog>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="addresses" className="space-y-3 py-2">
-                {selected.savedAddresses.map((addr, i) => {
-                  const Icon = addressTypeIcon[addr.type];
-                  return (
-                    <div key={i} className="flex items-start gap-3 p-3 border rounded-lg">
-                      <div className="p-2 bg-secondary rounded-lg"><Icon className="h-4 w-4 text-primary" /></div>
-                      <div className="flex-1 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-card-foreground">{addr.type}</span>
-                          {addr.isDefault && <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">Default</span>}
-                        </div>
-                        <p className="text-muted-foreground mt-0.5">{addr.address}, {addr.city}, {addr.state} - {addr.pincode}</p>
-                      </div>
-                    </div>
-                  );
-                })}
               </TabsContent>
 
               <TabsContent value="stats" className="py-2">
@@ -205,12 +183,12 @@ export default function Customers() {
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Name</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Full Name</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Phone</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Email</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">City</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Orders</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Total Spent</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Last Order</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
@@ -220,9 +198,9 @@ export default function Customers() {
                   <td className="px-6 py-4 text-sm font-medium text-card-foreground">{c.name}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{c.phone}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{c.email}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.city}</td>
                   <td className="px-6 py-4 text-sm font-medium text-card-foreground">{c.orders}</td>
                   <td className="px-6 py-4 text-sm font-medium text-primary">{c.totalSpent}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{c.lastOrder}</td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => view(c)} className="p-1.5 hover:bg-muted rounded-lg"><Eye className="h-4 w-4 text-muted-foreground" /></button>
                   </td>
