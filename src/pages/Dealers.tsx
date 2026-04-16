@@ -1,4 +1,4 @@
-import { Search, Plus, Edit, Trash2, Key } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Key, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -10,74 +10,115 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface Dealer {
-  id: number; name: string; company: string; phone: string; location: string; orders: number; commission: string; status: string;
+  id: number;
+  contactPerson: string;
+  businessName: string;
+  email: string;
+  phone: string;
+  udyamNumber: string;
+  address: string;
+  city: string;
+  pincode: string;
+  orders: number;
+  commission: string;
+  status: string;
 }
 
 const initialDealers: Dealer[] = [
-  { id: 1, name: "Ravi Kumar", company: "Green Energy Traders", phone: "+91 98765 43210", location: "Chennai", orders: 24, commission: "₹45,000", status: "Active" },
-  { id: 2, name: "Priya Sharma", company: "EcoFuel Distributors", phone: "+91 87654 32109", location: "Coimbatore", orders: 18, commission: "₹32,000", status: "Active" },
-  { id: 3, name: "Arun Patel", company: "BioPower Solutions", phone: "+91 76543 21098", location: "Madurai", orders: 31, commission: "₹58,000", status: "Active" },
-  { id: 4, name: "Meena Devi", company: "Rural Biomass Co", phone: "+91 65432 10987", location: "Salem", orders: 12, commission: "₹21,000", status: "Inactive" },
+  { id: 1, contactPerson: "Ravi Kumar", businessName: "Green Energy Traders", email: "ravi@greenenergy.com", phone: "9876543210", udyamNumber: "UDYAM-TN-01-0012345", address: "12 Industrial Estate", city: "Chennai", pincode: "600001", orders: 24, commission: "₹45,000", status: "Active" },
+  { id: 2, contactPerson: "Priya Sharma", businessName: "EcoFuel Distributors", email: "priya@ecofuel.in", phone: "8765432109", udyamNumber: "UDYAM-TN-02-0067890", address: "45 Green Park Colony", city: "Coimbatore", pincode: "641001", orders: 18, commission: "₹32,000", status: "Active" },
+  { id: 3, contactPerson: "Arun Patel", businessName: "BioPower Solutions", email: "arun@biopower.com", phone: "7654321098", udyamNumber: "UDYAM-TN-03-0011223", address: "78 GIDC Industrial Area", city: "Madurai", pincode: "625001", orders: 31, commission: "₹58,000", status: "Active" },
+  { id: 4, contactPerson: "naresh", businessName: "—", email: "rnaresh31122002@gmail.com", phone: "8610623077", udyamNumber: "—", address: "—", city: "—", pincode: "—", orders: 0, commission: "₹0", status: "Active" },
+  { id: 5, contactPerson: "Meena Devi", businessName: "Rural Biomass Co", email: "meena@ruralbiomass.in", phone: "6543210987", udyamNumber: "—", address: "Village Rampur", city: "Salem", pincode: "636001", orders: 12, commission: "₹21,000", status: "Inactive" },
 ];
 
-const emptyDealer = { id: 0, name: "", company: "", phone: "", location: "", orders: 0, commission: "₹0", status: "Active" };
+const emptyDealer: Dealer & { password: string } = {
+  id: 0, contactPerson: "", businessName: "", email: "", phone: "", udyamNumber: "", address: "", city: "", pincode: "", orders: 0, commission: "₹0", status: "Active", password: "",
+};
 
 export default function Dealers() {
   const [dealers, setDealers] = useState<Dealer[]>(initialDealers);
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [form, setForm] = useState({ ...emptyDealer, password: "" });
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewDealer, setViewDealer] = useState<Dealer | null>(null);
+  const [form, setForm] = useState({ ...emptyDealer });
 
   const filtered = dealers.filter(d =>
-    d.name.toLowerCase().includes(search.toLowerCase()) ||
-    d.company.toLowerCase().includes(search.toLowerCase()) ||
-    d.phone.includes(search)
+    d.contactPerson.toLowerCase().includes(search.toLowerCase()) ||
+    d.businessName.toLowerCase().includes(search.toLowerCase()) ||
+    d.phone.includes(search) ||
+    d.email.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleAdd = () => {
-    if (!form.name || !form.phone || !form.password) { toast.error("Name, phone & password are required"); return; }
+    if (!form.contactPerson || !form.phone || !form.password) { toast.error("Contact person, phone & password are required"); return; }
     const newDealer: Dealer = { ...form, id: Date.now() };
     setDealers([...dealers, newDealer]);
-    setForm({ ...emptyDealer, password: "" });
+    setForm({ ...emptyDealer });
     setAddOpen(false);
-    toast.success(`Dealer "${form.name}" created with phone login`);
+    toast.success(`Dealer "${form.contactPerson}" created with phone login`);
   };
 
   const handleEdit = () => {
-    if (!form.name || !form.phone) { toast.error("Name and phone are required"); return; }
-    setDealers(dealers.map(d => d.id === form.id ? { ...d, name: form.name, company: form.company, phone: form.phone, location: form.location } : d));
+    if (!form.contactPerson || !form.phone) { toast.error("Contact person and phone are required"); return; }
+    setDealers(dealers.map(d => d.id === form.id ? { ...d, contactPerson: form.contactPerson, businessName: form.businessName, email: form.email, phone: form.phone, udyamNumber: form.udyamNumber, address: form.address, city: form.city, pincode: form.pincode } : d));
     setEditOpen(false);
-    toast.success(`Dealer "${form.name}" updated`);
+    toast.success(`Dealer "${form.contactPerson}" updated`);
   };
 
   const handleDelete = (d: Dealer) => {
     setDealers(dealers.filter(x => x.id !== d.id));
-    toast.success(`Dealer "${d.name}" deleted`);
+    toast.success(`Dealer "${d.contactPerson}" deleted`);
   };
 
   const openEdit = (d: Dealer) => { setForm({ ...d, password: "" }); setEditOpen(true); };
+  const openView = (d: Dealer) => { setViewDealer(d); setViewOpen(true); };
 
   const renderForm = (onSubmit: () => void, submitLabel: string, showPassword: boolean) => (
-    <div className="space-y-4 py-2">
+    <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
       {showPassword && <p className="text-xs text-muted-foreground">Dealer will login with their phone number and the password you set below.</p>}
-      <div>
-        <label className="text-sm font-medium text-card-foreground">Dealer Name *</label>
-        <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Full name" className="mt-1" />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Contact Person *</label>
+          <Input value={form.contactPerson} onChange={e => setForm(f => ({ ...f, contactPerson: e.target.value }))} placeholder="Full name" className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Business Name</label>
+          <Input value={form.businessName} onChange={e => setForm(f => ({ ...f, businessName: e.target.value }))} placeholder="Company name" className="mt-1" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Email</label>
+          <Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Phone (Login ID) *</label>
+          <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="9876543210" className="mt-1" />
+        </div>
       </div>
       <div>
-        <label className="text-sm font-medium text-card-foreground">Company</label>
-        <Input value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} placeholder="Company name" className="mt-1" />
+        <label className="text-sm font-medium text-card-foreground">UDYAM Number</label>
+        <Input value={form.udyamNumber} onChange={e => setForm(f => ({ ...f, udyamNumber: e.target.value }))} placeholder="UDYAM-XX-00-0000000" className="mt-1" />
       </div>
       <div>
-        <label className="text-sm font-medium text-card-foreground">Phone Number (Login ID) *</label>
-        <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+91 XXXXX XXXXX" className="mt-1" />
+        <label className="text-sm font-medium text-card-foreground">Address</label>
+        <Input value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="Full address" className="mt-1" />
       </div>
-      <div>
-        <label className="text-sm font-medium text-card-foreground">Location</label>
-        <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="City, State" className="mt-1" />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm font-medium text-card-foreground">City</label>
+          <Input value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} placeholder="City" className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-card-foreground">Pincode</label>
+          <Input value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))} placeholder="600001" className="mt-1" />
+        </div>
       </div>
       {showPassword && (
         <div>
@@ -99,10 +140,10 @@ export default function Dealers() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Dealer Network</h1>
-          <p className="text-muted-foreground">Manage dealer partners — admin creates login credentials</p>
+          <p className="text-muted-foreground">Users registered as "Dealer" in the mobile app</p>
         </div>
-        <Dialog open={addOpen} onOpenChange={v => { setAddOpen(v); if (v) setForm({ ...emptyDealer, password: "" }); }}>
-          <DialogContent>
+        <Dialog open={addOpen} onOpenChange={v => { setAddOpen(v); if (v) setForm({ ...emptyDealer }); }}>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>Create Dealer Credentials</DialogTitle>
               <DialogDescription>Set up a new dealer with phone number login.</DialogDescription>
@@ -113,13 +154,49 @@ export default function Dealers() {
         <Button onClick={() => setAddOpen(true)} className="gap-2"><Plus className="h-4 w-4" /> Add Dealer</Button>
       </div>
 
+      {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Edit Dealer</DialogTitle>
             <DialogDescription>Update dealer information.</DialogDescription>
           </DialogHeader>
           {renderForm(handleEdit, "Save Changes", false)}
+        </DialogContent>
+      </Dialog>
+
+      {/* View Dialog */}
+      <Dialog open={viewOpen} onOpenChange={setViewOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Dealer Details</DialogTitle>
+            <DialogDescription>Profile filled by user in the mobile app</DialogDescription>
+          </DialogHeader>
+          {viewDealer && (
+            <div className="bg-muted/30 rounded-lg p-4 space-y-2.5 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">User Type</span>
+                <Badge variant="outline" className="bg-indigo-500/10 text-indigo-400 border-indigo-500/30">Dealer</Badge>
+              </div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">Business Name</span><span className="text-card-foreground font-medium">{viewDealer.businessName || "—"}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">Contact Person</span><span className="text-card-foreground font-medium">{viewDealer.contactPerson}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-card-foreground">{viewDealer.email || "—"}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span className="text-card-foreground">{viewDealer.phone}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">UDYAM Number</span><span className="text-card-foreground">{viewDealer.udyamNumber || "—"}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span className="text-card-foreground text-right max-w-[200px]">{viewDealer.address || "—"}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">City</span><span className="text-card-foreground">{viewDealer.city || "—"}</span></div>
+              <div className="border-t border-border" />
+              <div className="flex justify-between"><span className="text-muted-foreground">Pincode</span><span className="text-card-foreground">{viewDealer.pincode || "—"}</span></div>
+            </div>
+          )}
+          <DialogFooter><DialogClose asChild><Button variant="outline">Close</Button></DialogClose></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -136,7 +213,8 @@ export default function Dealers() {
               <tr className="border-b bg-muted/50">
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Dealer</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Phone (Login)</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Location</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Email</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">City</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Orders</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Commission</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Status</th>
@@ -147,11 +225,12 @@ export default function Dealers() {
               {filtered.map((d) => (
                 <tr key={d.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-6 py-4">
-                    <p className="text-sm font-medium text-card-foreground">{d.name}</p>
-                    <p className="text-xs text-muted-foreground">{d.company}</p>
+                    <p className="text-sm font-medium text-card-foreground">{d.contactPerson}</p>
+                    <p className="text-xs text-muted-foreground">{d.businessName || "—"}</p>
                   </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground font-mono">{d.phone}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{d.location}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{d.email || "—"}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{d.city || "—"}</td>
                   <td className="px-6 py-4 text-sm text-card-foreground font-medium">{d.orders}</td>
                   <td className="px-6 py-4 text-sm text-primary font-semibold">{d.commission}</td>
                   <td className="px-6 py-4">
@@ -159,15 +238,16 @@ export default function Dealers() {
                       {d.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <button onClick={() => openEdit(d)} className="p-1.5 hover:bg-muted rounded-lg mr-1"><Edit className="h-4 w-4 text-muted-foreground" /></button>
+                  <td className="px-6 py-4 text-right flex items-center justify-end gap-1">
+                    <button onClick={() => openView(d)} className="p-1.5 hover:bg-muted rounded-lg"><Eye className="h-4 w-4 text-muted-foreground" /></button>
+                    <button onClick={() => openEdit(d)} className="p-1.5 hover:bg-muted rounded-lg"><Edit className="h-4 w-4 text-muted-foreground" /></button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="p-1.5 hover:bg-destructive/10 rounded-lg"><Trash2 className="h-4 w-4 text-destructive" /></button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete dealer "{d.name}"?</AlertDialogTitle>
+                          <AlertDialogTitle>Delete dealer "{d.contactPerson}"?</AlertDialogTitle>
                           <AlertDialogDescription>This will remove their login credentials and all data.</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -180,7 +260,7 @@ export default function Dealers() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">No dealers found</td></tr>
+                <tr><td colSpan={8} className="px-6 py-8 text-center text-muted-foreground">No dealers found</td></tr>
               )}
             </tbody>
           </table>
