@@ -31,7 +31,6 @@ interface Product {
   subPurposes: SubPurposeMap;
   description: string;
   category: string;
-  stock: number;
   minOrderQty: number;
   imageUrl: string;
 }
@@ -52,7 +51,7 @@ const initialProducts: Product[] = [
       "Industrial Dryer": ["Textile Dryer", "Food Processing Dryer", "Pharmaceutical Dryer", "Chemical Dryer", "Agricultural Dryer", "Custom"],
     },
     description: "High-quality biomass pellets for industrial and commercial use",
-    category: "Pellets", stock: 500, minOrderQty: 5, imageUrl: ""
+    category: "Pellets", minOrderQty: 5, imageUrl: ""
   },
   {
     id: 2, product: "Biomass Stove",
@@ -63,7 +62,7 @@ const initialProducts: Product[] = [
       "Industrial Dryer": ["Textile Dryer", "Food Processing Dryer", "Pharmaceutical Dryer", "Chemical Dryer", "Agricultural Dryer", "Custom"],
     },
     description: "Efficient biomass cooking stoves for home and commercial kitchens",
-    category: "Biomass Stove", stock: 45, minOrderQty: 1, imageUrl: ""
+    category: "Biomass Stove", minOrderQty: 1, imageUrl: ""
   },
   {
     id: 3, product: "Biomass Burner",
@@ -74,7 +73,7 @@ const initialProducts: Product[] = [
       "Industrial Dryer": ["Textile Dryer", "Food Processing Dryer", "Pharmaceutical Dryer", "Chemical Dryer", "Agricultural Dryer", "Custom"],
     },
     description: "Industrial biomass burners for heating and steam generation",
-    category: "Biomass Burner", stock: 12, minOrderQty: 1, imageUrl: ""
+    category: "Biomass Burner", minOrderQty: 1, imageUrl: ""
   },
 ];
 
@@ -90,7 +89,7 @@ interface FormState {
   
   description: string;
   category: string;
-  stock: number;
+  
   minOrderQty: number;
   imageUrl: string;
 }
@@ -98,14 +97,9 @@ interface FormState {
 const emptyForm: FormState = {
   id: 0, product: "", sizes: [{ size: "", price: "" }], purposes: [], subPurposes: {},
   newPurpose: "", newSubPurpose: "", activePurposeForSub: "",
-  description: "", category: "Pellets", stock: 0, minOrderQty: 1, imageUrl: ""
+  description: "", category: "Pellets", minOrderQty: 1, imageUrl: ""
 };
 
-function StockBadge({ stock }: { stock: number }) {
-  if (stock === 0) return <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-destructive/10 text-destructive">Out of Stock</span>;
-  if (stock <= 100) return <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-yellow-50 text-status-processing">{stock} units</span>;
-  return <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-primary/10 text-primary">{stock} units</span>;
-}
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -125,7 +119,7 @@ export default function Products() {
     const newProduct: Product = {
       id: Date.now(), product: form.product, sizes: validSizes, purposes: form.purposes,
       subPurposes: form.subPurposes, description: form.description,
-      category: form.category, stock: form.stock, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl
+      category: form.category, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl
     };
     setProducts([...products, newProduct]);
     setForm({ ...emptyForm });
@@ -139,7 +133,7 @@ export default function Products() {
     const updated: Product = {
       id: form.id, product: form.product, sizes: validSizes, purposes: form.purposes,
       subPurposes: form.subPurposes, description: form.description,
-      category: form.category, stock: form.stock, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl
+      category: form.category, minOrderQty: form.minOrderQty, imageUrl: form.imageUrl
     };
     setProducts(products.map(p => p.id === form.id ? updated : p));
     setEditOpen(false);
@@ -157,7 +151,7 @@ export default function Products() {
       subPurposes: JSON.parse(JSON.stringify(p.subPurposes)),
       newPurpose: "", newSubPurpose: "", activePurposeForSub: p.purposes[0] || "",
       description: p.description, category: p.category,
-      stock: p.stock, minOrderQty: p.minOrderQty, imageUrl: p.imageUrl
+      minOrderQty: p.minOrderQty, imageUrl: p.imageUrl
     });
     setEditOpen(true);
   };
@@ -413,7 +407,7 @@ export default function Products() {
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Category</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Sizes & Prices</th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Purposes</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Stock</th>
+                
                 
                 <th className="text-right px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
@@ -453,7 +447,7 @@ export default function Products() {
                       ))}
                     </div>
                   </td>
-                  <td className="px-6 py-4"><StockBadge stock={p.stock} /></td>
+                  
                   
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-muted rounded-lg mr-1"><Edit className="h-4 w-4 text-muted-foreground" /></button>
