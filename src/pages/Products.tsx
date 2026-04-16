@@ -29,7 +29,6 @@ interface Product {
   sizes: SizePrice[];
   purposes: string[];
   subPurposes: SubPurposeMap;
-  deliveryFee: string;
   description: string;
   category: string;
   stock: number;
