@@ -121,11 +121,13 @@ export default function Dealers() {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-sm font-medium text-card-foreground">Email</label>
-          <Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className="mt-1" />
+          <Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className={`mt-1 ${form.email && !validateEmail(form.email) ? "border-destructive" : ""}`} />
+          {form.email && !validateEmail(form.email) && <p className="text-xs text-destructive mt-1">Invalid email format</p>}
         </div>
         <div>
           <label className="text-sm font-medium text-card-foreground">Phone (Login ID) *</label>
-          <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="9876543210" className="mt-1" />
+          <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))} placeholder="9876543210" maxLength={10} className={`mt-1 ${form.phone && !validatePhone(form.phone) ? "border-destructive" : ""}`} />
+          {form.phone && !validatePhone(form.phone) && <p className="text-xs text-destructive mt-1">Must be 10 digits starting with 6-9</p>}
         </div>
       </div>
       <div>
