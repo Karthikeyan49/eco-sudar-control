@@ -236,7 +236,7 @@ export default function Dealers() {
         </DialogContent>
       </Dialog>
 
-
+      <div className="bg-card rounded-xl border shadow-sm">
         <div className="p-4 border-b">
           <div className="relative w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
