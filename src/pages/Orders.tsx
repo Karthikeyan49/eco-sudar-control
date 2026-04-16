@@ -260,6 +260,7 @@ export default function Orders() {
                 <h3 className="text-sm font-semibold text-card-foreground mb-2">Customer & Delivery</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div><span className="text-muted-foreground">Name:</span><p className="font-medium text-card-foreground">{selectedOrder.customer.name}</p></div>
+                  <div><span className="text-muted-foreground">Type:</span><p><span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${selectedOrder.customer.type === "Dealer" ? "bg-indigo-500/15 text-indigo-400" : "bg-primary/10 text-primary"}`}>{selectedOrder.customer.type}</span></p></div>
                   <div><span className="text-muted-foreground">Phone:</span><p className="font-medium text-card-foreground">{selectedOrder.customer.phone}</p></div>
                   <div className="col-span-2"><span className="text-muted-foreground">Address:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.address}, {selectedOrder.deliveryAddress.landmark && `${selectedOrder.deliveryAddress.landmark}, `}{selectedOrder.deliveryAddress.city}, {selectedOrder.deliveryAddress.state} - {selectedOrder.deliveryAddress.pincode}</p></div>
                   <div><span className="text-muted-foreground">Type:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.addressType}</p></div>
