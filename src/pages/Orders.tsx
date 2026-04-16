@@ -153,6 +153,7 @@ export default function Orders() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [trackingInput, setTrackingInput] = useState("");
+  const [paymentInput, setPaymentInput] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
 
   const filtered = orders.filter(o => {
@@ -166,6 +167,7 @@ export default function Orders() {
   const viewOrder = (o: Order) => {
     setSelectedOrder({ ...o });
     setTrackingInput(o.trackingNumber);
+    setPaymentInput(o.paymentMethod);
     setCancelReason("");
     setDetailOpen(true);
   };
