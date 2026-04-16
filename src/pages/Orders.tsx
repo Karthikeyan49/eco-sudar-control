@@ -63,6 +63,8 @@ const statusColors: Record<string, string> = {
   Returned: "bg-purple-50 text-status-returned",
 };
 
+const paymentMethods = ["Pending", "COD", "UPI", "Online", "Net Banking", "Wallet"];
+
 const initialOrders: Order[] = [
   {
     id: "ES202604150028",
@@ -73,7 +75,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Rajesh Kumar", phone: "+91 98765 43210", address: "12 Industrial Estate", landmark: "Near Railway Station", city: "Chennai", state: "Tamil Nadu", pincode: "600001", addressType: "Office", preferredDate: "2024-03-18", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "Call before delivery" },
     date: "15/4/2026", status: "Pending",
     customer: { name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@greenindustries.com" },
-    trackingNumber: "", paymentMethod: "UPI", cancelReason: "", refundStatus: "N/A",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹130", gstAmount: "₹23.40", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹167",
   },
   {
@@ -84,7 +86,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Priya Sharma", phone: "+91 87654 32109", address: "45 Green Park Colony", landmark: "Opposite Mall", city: "Bangalore", state: "Karnataka", pincode: "560001", addressType: "Home", preferredDate: "2024-03-17", preferredTimeSlot: "2 PM - 6 PM", deliveryInstructions: "" },
     date: "15/4/2026", status: "Pending",
     customer: { name: "Priya Sharma", phone: "+91 87654 32109", email: "priya@ecoheat.in" },
-    trackingNumber: "", paymentMethod: "COD", cancelReason: "", refundStatus: "N/A",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹100", gstAmount: "₹18", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹167",
   },
   {
@@ -95,7 +97,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Anand Patel", phone: "+91 76543 21098", address: "78 GIDC Industrial Area", landmark: "Near Water Tank", city: "Ahmedabad", state: "Gujarat", pincode: "380001", addressType: "Office", preferredDate: "2024-03-20", preferredTimeSlot: "10 AM - 2 PM", deliveryInstructions: "Heavy load - forklift needed" },
     date: "15/4/2026", status: "Pending",
     customer: { name: "Anand Patel", phone: "+91 76543 21098", email: "anand@biomasstrading.com" },
-    trackingNumber: "", paymentMethod: "Online", cancelReason: "", refundStatus: "N/A",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "", refundStatus: "N/A",
     subtotal: "₹68", gstAmount: "₹12.24", deliveryFee: "₹150", discount: "₹0", grandTotal: "₹158.50",
   },
   {
@@ -128,7 +130,7 @@ const initialOrders: Order[] = [
     deliveryAddress: { name: "Kavitha R", phone: "+91 99887 76655", address: "10 Anna Nagar", landmark: "", city: "Madurai", state: "Tamil Nadu", pincode: "625001", addressType: "Home", preferredDate: "2024-03-10", preferredTimeSlot: "2 PM - 6 PM", deliveryInstructions: "" },
     date: "12/4/2026", status: "Cancelled",
     customer: { name: "Kavitha R", phone: "+91 99887 76655", email: "kavitha@gmail.com" },
-    trackingNumber: "", paymentMethod: "Online", cancelReason: "Customer request - changed mind", refundStatus: "Initiated",
+    trackingNumber: "", paymentMethod: "Pending", cancelReason: "Customer request - changed mind", refundStatus: "Initiated",
     subtotal: "₹40,000", gstAmount: "₹7,200", deliveryFee: "₹2,000", discount: "₹0", grandTotal: "₹49,200",
   },
   {
