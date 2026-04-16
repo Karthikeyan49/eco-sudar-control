@@ -31,7 +31,6 @@ interface Product {
   subPurposes: SubPurposeMap;
   description: string;
   category: string;
-  stock: number;
   minOrderQty: number;
   imageUrl: string;
 }
