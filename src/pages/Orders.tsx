@@ -314,18 +314,6 @@ export default function Orders() {
                 </div>
               </div>
 
-              {/* Delivery Preferences */}
-              <div className="border-t pt-3">
-                <h3 className="text-sm font-semibold text-card-foreground mb-2">Delivery Preferences</h3>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div><span className="text-muted-foreground">Address:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.address}, {selectedOrder.deliveryAddress.landmark && `${selectedOrder.deliveryAddress.landmark}, `}{selectedOrder.deliveryAddress.city}, {selectedOrder.deliveryAddress.state} - {selectedOrder.deliveryAddress.pincode}</p></div>
-                  <div><span className="text-muted-foreground">Type:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.addressType}</p></div>
-                  <div><span className="text-muted-foreground">Preferred:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.preferredDate} • {selectedOrder.deliveryAddress.preferredTimeSlot}</p></div>
-                  {selectedOrder.deliveryAddress.deliveryInstructions && (
-                    <div className="col-span-2"><span className="text-muted-foreground">Instructions:</span><p className="font-medium text-card-foreground">{selectedOrder.deliveryAddress.deliveryInstructions}</p></div>
-                  )}
-                </div>
-              </div>
 
               {/* Shipment Section */}
               <div className="border-t pt-3">
