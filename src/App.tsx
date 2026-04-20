@@ -21,6 +21,7 @@ import Payroll from "./pages/Payroll";
 import Tasks from "./pages/Tasks";
 import Meetings from "./pages/Meetings";
 import Sops from "./pages/Sops";
+import Workflows from "./pages/Workflows";
 import SettingsPage from "./pages/Settings";
 import Queries from "./pages/Queries";
 import FAQPage from "./pages/FAQ";
@@ -56,6 +57,7 @@ function ProtectedRoutes() {
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/meetings" element={<Meetings />} />
         <Route path="/sops" element={<Sops />} />
+        <Route path="/workflows" element={<Workflows />} />
         <Route path="/queries" element={<Queries />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/quote-requests" element={<QuoteRequests />} />
