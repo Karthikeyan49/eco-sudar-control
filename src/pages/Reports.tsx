@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FileDown, FileSpreadsheet, BarChart3, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,6 +74,15 @@ export default function Reports() {
   const [from, setFrom] = useState(minus(30));
   const [to, setTo] = useState(today());
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<string>("all");
+
+  // Reset category whenever the module changes
+  useEffect(() => { setCategory("all"); }, [module]);
+
+  const categoryOptions = useMemo(
+    () => Array.from(new Set(MOCK_ROWS[module].map((r) => r.category))).sort(),
+    [module],
+  );
 
   const onPreset = (p: Preset) => {
     setPreset(p);
@@ -85,6 +94,7 @@ export default function Reports() {
 
   const rows = useMemo(() => {
     return MOCK_ROWS[module].filter((r) => {
+      if (category !== "all" && r.category !== category) return false;
       if (from && r.date < from) return false;
       if (to && r.date > to) return false;
       if (search) {
@@ -95,7 +105,7 @@ export default function Reports() {
       }
       return true;
     });
-  }, [module, from, to, search]);
+  }, [module, from, to, search, category]);
 
   const stats = useMemo(() => {
     const total = rows.reduce((s, r) => s + r.amount, 0);
