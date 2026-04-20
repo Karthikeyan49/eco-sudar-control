@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Pencil, Trash2, Upload, Wallet, Receipt, TrendingUp, Layers } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Plus, Search, Pencil, Trash2, Upload, Wallet, Receipt, TrendingUp, Layers, Camera, ImageIcon, Sparkles, Loader2, X } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,17 +16,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { StatCard } from "@/components/StatCard";
 import { toast } from "sonner";
 import {
-  EXPENSE_CATEGORIES, expensesApi, type Expense, type ExpenseCategory,
+  EXPENSE_CATEGORIES, expensesApi, type Expense,
 } from "@/lib/api/expenses";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from "recharts";
 
 const PAYMENT_MODES: Expense["paymentMode"][] = ["Cash", "Bank Transfer", "UPI", "Cheque", "Card"];
+const OTHER = "Other" as const;
 
 const expenseSchema = z.object({
   date: z.string().min(1, "Date is required"),
-  category: z.enum(EXPENSE_CATEGORIES as unknown as [string, ...string[]]),
+  category: z.string().trim().min(2, "Category required").max(60),
   vendor: z.string().trim().min(2, "Vendor required").max(120),
   description: z.string().trim().max(300).optional().default(""),
   amount: z.number().positive("Amount must be > 0").max(10_000_000),
@@ -44,7 +45,8 @@ const CHART_COLORS = [
 
 interface FormState {
   date: string;
-  category: ExpenseCategory;
+  category: string;          // any string (preset OR custom from "Other")
+  categoryChoice: string;    // dropdown value: a preset OR "Other"
   vendor: string;
   description: string;
   amount: string;
@@ -55,6 +57,7 @@ interface FormState {
 const emptyForm = (): FormState => ({
   date: new Date().toISOString().slice(0, 10),
   category: "Office Stationery",
+  categoryChoice: "Office Stationery",
   vendor: "",
   description: "",
   amount: "",
@@ -118,12 +121,23 @@ export default function Expenses() {
     return { total, count: filtered.length, pieData, barData, topCategory: top };
   }, [filtered]);
 
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
+  const [extracting, setExtracting] = useState(false);
+
   const openCreate = () => { setEditing(null); setForm(emptyForm()); setDialogOpen(true); };
   const openEdit = (e: Expense) => {
     setEditing(e);
+    const isPreset = (EXPENSE_CATEGORIES as readonly string[]).includes(e.category);
     setForm({
-      date: e.date, category: e.category, vendor: e.vendor, description: e.description,
-      amount: String(e.amount), paymentMode: e.paymentMode, billUrl: e.billUrl,
+      date: e.date,
+      category: e.category,
+      categoryChoice: isPreset ? e.category : OTHER,
+      vendor: e.vendor,
+      description: e.description,
+      amount: String(e.amount),
+      paymentMode: e.paymentMode,
+      billUrl: e.billUrl,
     });
     setDialogOpen(true);
   };
@@ -135,6 +149,22 @@ export default function Expenses() {
     const reader = new FileReader();
     reader.onload = () => setForm((prev) => ({ ...prev, billUrl: reader.result as string }));
     reader.readAsDataURL(f);
+  };
+
+  const autoFillFromBill = async () => {
+    if (!form.billUrl) { toast.error("Upload a bill first"); return; }
+    setExtracting(true);
+    try {
+      // TODO: When Lovable Cloud is enabled, POST { image: form.billUrl } to the
+      // `extract-expense` edge function (Lovable AI Gateway, gemini-3-flash-preview
+      // with vision). Response: { date, vendor, amount, category, description }.
+      await new Promise((r) => setTimeout(r, 900));
+      toast.info("AI auto-fill needs Lovable Cloud — enable it to extract bill details automatically.");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not extract bill");
+    } finally {
+      setExtracting(false);
+    }
   };
 
   const onSubmit = async () => {
@@ -284,11 +314,81 @@ export default function Expenses() {
 
       {/* Add/Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "Edit Expense" : "Add Expense"}</DialogTitle>
-            <DialogDescription>Record a business expense entry. Attach a bill if available.</DialogDescription>
+            <DialogDescription>Snap a photo of the bill — we'll auto-fill the details. You can edit before saving.</DialogDescription>
           </DialogHeader>
+
+          {/* === Bill / Receipt — TOP === */}
+          <div className="rounded-xl border-2 border-dashed bg-muted/30 p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold">Bill / Receipt</Label>
+              <span className="text-xs text-muted-foreground">Image or PDF · max 5MB</span>
+            </div>
+
+            {/* Hidden inputs driven by the two buttons */}
+            <input
+              ref={cameraRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={(e) => onFile(e.target.files?.[0])}
+            />
+            <input
+              ref={galleryRef}
+              type="file"
+              accept="image/*,application/pdf"
+              className="hidden"
+              onChange={(e) => onFile(e.target.files?.[0])}
+            />
+
+            {!form.billUrl && (
+              <div className="grid grid-cols-2 gap-2">
+                <Button type="button" variant="outline" onClick={() => cameraRef.current?.click()}>
+                  <Camera className="h-4 w-4" /> Take Photo
+                </Button>
+                <Button type="button" variant="outline" onClick={() => galleryRef.current?.click()}>
+                  <ImageIcon className="h-4 w-4" /> Upload from Gallery
+                </Button>
+              </div>
+            )}
+
+            {form.billUrl && (
+              <div className="space-y-2">
+                <div className="relative bg-background rounded-lg border overflow-hidden">
+                  {form.billUrl.startsWith("data:image") ? (
+                    <img src={form.billUrl} alt="Bill preview" className="w-full max-h-48 object-contain bg-muted/40" />
+                  ) : (
+                    <div className="p-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                      <Upload className="h-4 w-4" /> PDF attached
+                    </div>
+                  )}
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="secondary"
+                    className="absolute top-2 right-2 h-7 w-7"
+                    onClick={() => setForm({ ...form, billUrl: undefined })}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" variant="outline" className="flex-1" onClick={() => galleryRef.current?.click()}>
+                    Replace
+                  </Button>
+                  <Button type="button" size="sm" className="flex-1" disabled={extracting} onClick={autoFillFromBill}>
+                    {extracting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                    Auto-fill from photo
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* === Form fields === */}
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-1">
               <Label>Date</Label>
@@ -298,15 +398,35 @@ export default function Expenses() {
               <Label>Amount (₹)</Label>
               <Input type="number" min="1" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
             </div>
+
             <div className="col-span-2">
               <Label>Category</Label>
-              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory })}>
+              <Select
+                value={form.categoryChoice}
+                onValueChange={(v) => setForm({
+                  ...form,
+                  categoryChoice: v,
+                  category: v === OTHER ? "" : v,
+                })}
+              >
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {EXPENSE_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                 </SelectContent>
               </Select>
+
+              {form.categoryChoice === OTHER && (
+                <div className="mt-2">
+                  <Input
+                    autoFocus
+                    placeholder="Enter custom category name"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
+
             <div className="col-span-2">
               <Label>Vendor / Payee</Label>
               <Input value={form.vendor} onChange={(e) => setForm({ ...form, vendor: e.target.value })} placeholder="e.g. Sri Lakshmi Traders" />
@@ -323,13 +443,6 @@ export default function Expenses() {
                   {PAYMENT_MODES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="col-span-2">
-              <Label>Bill / Receipt (image or PDF, max 5MB)</Label>
-              <div className="flex items-center gap-2">
-                <Input type="file" accept="image/*,application/pdf" capture="environment" onChange={(e) => onFile(e.target.files?.[0])} />
-                {form.billUrl && <a href={form.billUrl} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline whitespace-nowrap"><Upload className="h-3 w-3 inline" /> Preview</a>}
-              </div>
             </div>
           </div>
           <DialogFooter>

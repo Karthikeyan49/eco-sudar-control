@@ -1,17 +1,22 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopNavbar } from "@/components/TopNavbar";
+import { ChatContextProvider } from "@/contexts/ChatContext";
+import { ChatWidget } from "@/components/ChatWidget";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <TopNavbar />
-          <main className="flex-1 overflow-auto p-6">{children}</main>
+    <ChatContextProvider>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col min-w-0">
+            <TopNavbar />
+            <main className="flex-1 overflow-auto p-6">{children}</main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+        <ChatWidget />
+      </SidebarProvider>
+    </ChatContextProvider>
   );
 }

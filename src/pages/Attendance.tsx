@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { StatCard } from "@/components/StatCard";
 import { QrScanner } from "@/components/QrScanner";
 import { toast } from "sonner";
@@ -68,8 +71,9 @@ export default function Attendance() {
         action: res.action === "checked-in" ? "Checked IN" : "Checked OUT",
         time: new Date().toLocaleTimeString("en-IN"),
       });
-      toast.success(`${res.employee.name} — ${res.action}`);
       load();
+      // Auto-dismiss success popup after 2s
+      setTimeout(() => setLastScan(null), 2000);
     } catch (e: any) { toast.error(e.message); }
     finally { setTimeout(() => setBusy(false), 1500); }
   };
@@ -178,15 +182,36 @@ export default function Attendance() {
         </div>
       </div>
 
-      <Dialog open={scannerOpen} onOpenChange={setScannerOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>QR Attendance Scanner</DialogTitle>
-            <DialogDescription>First scan = check-in, second scan same day = check-out.</DialogDescription>
-          </DialogHeader>
-          <QrScanner onScan={onScan} busy={busy} />
-        </DialogContent>
-      </Dialog>
+      {scannerOpen && (
+        <QrScanner
+          fullscreen
+          onScan={onScan}
+          busy={busy}
+          onClose={() => setScannerOpen(false)}
+        />
+      )}
+
+      {/* Success popup — auto dismisses */}
+      <AlertDialog open={!!lastScan} onOpenChange={(o) => !o && setLastScan(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-primary">
+              <CheckCircle2 className="h-6 w-6" /> Attendance Recorded Successfully
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {lastScan && (
+                <span className="block space-y-1 mt-2 text-foreground">
+                  <span className="block text-lg font-semibold">{lastScan.name}</span>
+                  <span className="block text-sm text-muted-foreground">{lastScan.action} at {lastScan.time}</span>
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setLastScan(null)}>OK</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

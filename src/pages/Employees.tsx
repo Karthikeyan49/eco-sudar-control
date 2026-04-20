@@ -92,12 +92,70 @@ export default function Employees() {
 
   const downloadQr = async (e: Employee) => {
     try {
-      const dataUrl = await QRCode.toDataURL(e.qrToken, { width: 600, margin: 2 });
+      // Render an Identity-Card style PNG (600 x 900)
+      const W = 600, H = 900;
+      const canvas = document.createElement("canvas");
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas not supported");
+
+      // White background
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, W, H);
+
+      // Green header bar
+      ctx.fillStyle = "hsl(152, 60%, 36%)";
+      ctx.fillRect(0, 0, W, 110);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 30px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("ECO SUDAR", W / 2, 50);
+      ctx.font = "16px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText("Bio Energy LLP — Employee ID", W / 2, 80);
+
+      // Employee details
+      ctx.fillStyle = "#0f172a";
+      ctx.textAlign = "center";
+      ctx.font = "bold 32px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText(e.name, W / 2, 170);
+
+      ctx.fillStyle = "#475569";
+      ctx.font = "18px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText(`${e.designation} · ${e.department}`, W / 2, 200);
+
+      ctx.fillStyle = "hsl(152, 60%, 36%)";
+      ctx.font = "bold 22px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.fillText(e.id, W / 2, 240);
+
+      // QR code (420x420 centred)
+      const qrDataUrl = await QRCode.toDataURL(e.qrToken, { width: 420, margin: 1, errorCorrectionLevel: "M" });
+      const img = new Image();
+      img.src = qrDataUrl;
+      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+      const QR = 420;
+      ctx.drawImage(img, (W - QR) / 2, 280, QR, QR);
+
+      // Footer
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 16px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText("Scan at attendance kiosk for check-in / check-out", W / 2, 760);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "13px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.fillText(e.qrToken, W / 2, 790);
+      ctx.font = "12px system-ui, -apple-system, Segoe UI, sans-serif";
+      ctx.fillText(e.email || "", W / 2, 815);
+      ctx.fillText(e.phone || "", W / 2, 835);
+
+      // Bottom border accent
+      ctx.fillStyle = "hsl(152, 60%, 36%)";
+      ctx.fillRect(0, H - 12, W, 12);
+
+      const dataUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `${e.id}-${e.name.replace(/\s+/g, "_")}-QR.png`;
+      a.download = `${e.id}-${e.name.replace(/\s+/g, "_")}-IDCard.png`;
       a.click();
-    } catch { toast.error("Could not generate QR"); }
+    } catch { toast.error("Could not generate ID card"); }
   };
 
   return (

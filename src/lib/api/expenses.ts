@@ -14,12 +14,12 @@ export const EXPENSE_CATEGORIES = [
   "Other",
 ] as const;
 
-export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number] | string;
 
 export interface Expense {
   id: string;
   date: string; // ISO yyyy-mm-dd
-  category: ExpenseCategory;
+  category: string;
   vendor: string;
   description: string;
   amount: number;

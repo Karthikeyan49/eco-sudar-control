@@ -21,6 +21,7 @@ import {
   CalendarClock,
   BookOpen,
   GitBranch,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -89,6 +90,10 @@ const sections: MenuSection[] = [
       { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
       { title: "FAQ Management", url: "/faq", icon: HelpCircle },
     ],
+  },
+  {
+    label: "Intelligence",
+    items: [{ title: "AI Insights", url: "/insights", icon: Sparkles }],
   },
   {
     label: "Admin",
