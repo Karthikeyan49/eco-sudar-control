@@ -3,7 +3,6 @@ import {
   Store,
   Users,
   ShoppingCart,
-  Package,
   FileText,
   Settings,
   ChevronLeft,
@@ -31,6 +30,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -38,28 +38,62 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const menuItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Products", url: "/products", icon: Store },
-  { title: "Orders", url: "/orders", icon: ShoppingCart },
-  { title: "Customers", url: "/customers", icon: Users },
-  { title: "Dealer Network", url: "/dealers", icon: UserCheck },
-  { title: "Invoices", url: "/invoices", icon: FileText },
-  { title: "Expenses", url: "/expenses", icon: Wallet },
-  { title: "Profit & Loss", url: "/finance", icon: LineChart },
-  { title: "GST Invoicing", url: "/gst-invoicing", icon: Receipt },
-  { title: "Reports", url: "/reports", icon: FileBarChart2 },
-  { title: "Employees", url: "/employees", icon: Contact2 },
-  { title: "Attendance", url: "/attendance", icon: ClipboardCheck },
-  { title: "Payroll", url: "/payroll", icon: BadgeIndianRupee },
-  { title: "Tasks", url: "/tasks", icon: ListTodo },
-  { title: "Meetings", url: "/meetings", icon: CalendarClock },
-  { title: "SOPs", url: "/sops", icon: BookOpen },
-  { title: "Workflows", url: "/workflows", icon: GitBranch },
-  { title: "Queries", url: "/queries", icon: MessageSquare },
-  { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
-  { title: "FAQ Management", url: "/faq", icon: HelpCircle },
-  { title: "Settings", url: "/settings", icon: Settings },
+type MenuItem = { title: string; url: string; icon: typeof LayoutDashboard };
+type MenuSection = { label: string; items: MenuItem[] };
+
+const sections: MenuSection[] = [
+  {
+    label: "Overview",
+    items: [{ title: "Dashboard", url: "/", icon: LayoutDashboard }],
+  },
+  {
+    label: "Operations",
+    items: [
+      { title: "Products", url: "/products", icon: Store },
+      { title: "Orders", url: "/orders", icon: ShoppingCart },
+      { title: "Customers", url: "/customers", icon: Users },
+      { title: "Dealer Network", url: "/dealers", icon: UserCheck },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      { title: "Invoices", url: "/invoices", icon: FileText },
+      { title: "Expenses", url: "/expenses", icon: Wallet },
+      { title: "Profit & Loss", url: "/finance", icon: LineChart },
+      { title: "GST Invoicing", url: "/gst-invoicing", icon: Receipt },
+      { title: "Reports", url: "/reports", icon: FileBarChart2 },
+    ],
+  },
+  {
+    label: "Human Resources",
+    items: [
+      { title: "Employees", url: "/employees", icon: Contact2 },
+      { title: "Attendance", url: "/attendance", icon: ClipboardCheck },
+      { title: "Payroll", url: "/payroll", icon: BadgeIndianRupee },
+    ],
+  },
+  {
+    label: "Productivity",
+    items: [
+      { title: "Tasks", url: "/tasks", icon: ListTodo },
+      { title: "Meetings", url: "/meetings", icon: CalendarClock },
+      { title: "Workflows", url: "/workflows", icon: GitBranch },
+      { title: "SOPs", url: "/sops", icon: BookOpen },
+    ],
+  },
+  {
+    label: "Customer Engagement",
+    items: [
+      { title: "Queries", url: "/queries", icon: MessageSquare },
+      { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
+      { title: "FAQ Management", url: "/faq", icon: HelpCircle },
+    ],
+  },
+  {
+    label: "Admin",
+    items: [{ title: "Settings", url: "/settings", icon: Settings }],
+  },
 ];
 
 export function AppSidebar() {
@@ -80,30 +114,37 @@ export function AppSidebar() {
       </div>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => {
-                const active = location.pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={active}>
-                      <NavLink
-                        to={item.url}
-                        end
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sidebar-foreground/80 hover:bg-sidebar-accent transition-colors"
-                        activeClassName="bg-sidebar-primary text-sidebar-primary-foreground font-medium hover:bg-sidebar-primary"
-                      >
-                        <item.icon className="h-5 w-5 shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {sections.map((section) => (
+          <SidebarGroup key={section.label}>
+            {!collapsed && (
+              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider text-sidebar-foreground/50 font-semibold px-3">
+                {section.label}
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((item) => {
+                  const active = location.pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={active}>
+                        <NavLink
+                          to={item.url}
+                          end
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sidebar-foreground/80 hover:bg-sidebar-accent transition-colors"
+                          activeClassName="bg-sidebar-primary text-sidebar-primary-foreground font-medium hover:bg-sidebar-primary"
+                        >
+                          <item.icon className="h-5 w-5 shrink-0" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarFooter>
