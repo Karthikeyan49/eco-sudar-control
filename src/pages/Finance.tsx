@@ -72,15 +72,14 @@ export default function Finance() {
 
       {/* Top KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Revenue" value={inr(pnl.revenue)} subtitle="all sources" icon={Wallet} trend={{ value: "+12.4%", isPositive: true }} />
-        <StatCard title="Total Expenses" value={inr(pnl.expenses)} subtitle="operating costs" icon={Receipt} trend={{ value: "+5.1%", isPositive: false }} />
+        <StatCard title="Total Revenue" value={inr(pnl.revenue)} subtitle="↑ 12.4% vs last period" icon={Wallet} />
+        <StatCard title="Total Expenses" value={inr(pnl.expenses)} subtitle="↑ 5.1% vs last period" icon={Receipt} subtitleColor="muted" />
         <StatCard title="Gross Profit" value={inr(pnl.grossProfit)} subtitle={`Tax: ${inr(pnl.taxes)}`} icon={TrendingUp} />
         <StatCard
           title={profitable ? "Net Profit" : "Net Loss"}
           value={inr(Math.abs(pnl.netProfit))}
           subtitle={profitable ? "after taxes" : "deficit"}
           icon={profitable ? PiggyBank : TrendingDown}
-          trend={{ value: profitable ? "+8.7%" : "-3.2%", isPositive: profitable }}
         />
       </div>
 
