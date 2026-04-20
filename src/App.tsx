@@ -12,6 +12,7 @@ import Customers from "./pages/Customers";
 import Dealers from "./pages/Dealers";
 import Invoices from "./pages/Invoices";
 import Expenses from "./pages/Expenses";
+import Finance from "./pages/Finance";
 import SettingsPage from "./pages/Settings";
 import Queries from "./pages/Queries";
 import FAQPage from "./pages/FAQ";
@@ -38,6 +39,7 @@ function ProtectedRoutes() {
         <Route path="/dealers" element={<Dealers />} />
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/expenses" element={<Expenses />} />
+        <Route path="/finance" element={<Finance />} />
         <Route path="/queries" element={<Queries />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/quote-requests" element={<QuoteRequests />} />
