@@ -166,6 +166,25 @@ export default function Reports() {
         })}
       </div>
 
+      {/* Category selector — drives table + exports */}
+      <div className="bg-card rounded-xl border p-4 shadow-sm flex flex-wrap items-end gap-3">
+        <div className="min-w-[220px]">
+          <Label className="text-xs">Category</Label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger><SelectValue placeholder="All categories" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {categoryOptions.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {category === "all"
+            ? `Showing all categories for ${MODULES.find((m) => m.key === module)?.label}.`
+            : `Filtering by "${category}" — exports will only include this category.`}
+        </p>
+      </div>
+
       {/* Filters */}
       <div className="bg-card rounded-xl border p-4 shadow-sm">
         <div className="flex items-center gap-2 mb-3 text-sm font-medium text-card-foreground">
