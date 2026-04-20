@@ -15,6 +15,9 @@ import {
   LineChart,
   Receipt,
   FileBarChart2,
+  Contact2,
+  ClipboardCheck,
+  BadgeIndianRupee,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -42,6 +45,9 @@ const menuItems = [
   { title: "Profit & Loss", url: "/finance", icon: LineChart },
   { title: "GST Invoicing", url: "/gst-invoicing", icon: Receipt },
   { title: "Reports", url: "/reports", icon: FileBarChart2 },
+  { title: "Employees", url: "/employees", icon: Contact2 },
+  { title: "Attendance", url: "/attendance", icon: ClipboardCheck },
+  { title: "Payroll", url: "/payroll", icon: BadgeIndianRupee },
   { title: "Queries", url: "/queries", icon: MessageSquare },
   { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
   { title: "FAQ Management", url: "/faq", icon: HelpCircle },
