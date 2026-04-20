@@ -18,6 +18,7 @@ import Reports from "./pages/Reports";
 import Employees from "./pages/Employees";
 import Attendance from "./pages/Attendance";
 import Payroll from "./pages/Payroll";
+import Tasks from "./pages/Tasks";
 import SettingsPage from "./pages/Settings";
 import Queries from "./pages/Queries";
 import FAQPage from "./pages/FAQ";
@@ -50,6 +51,7 @@ function ProtectedRoutes() {
         <Route path="/employees" element={<Employees />} />
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/payroll" element={<Payroll />} />
+        <Route path="/tasks" element={<Tasks />} />
         <Route path="/queries" element={<Queries />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/quote-requests" element={<QuoteRequests />} />
