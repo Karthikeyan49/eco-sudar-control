@@ -11,6 +11,7 @@ import {
   MessageSquare,
   HelpCircle,
   Calculator,
+  Wallet,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -34,6 +35,7 @@ const menuItems = [
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Dealer Network", url: "/dealers", icon: UserCheck },
   { title: "Invoices", url: "/invoices", icon: FileText },
+  { title: "Expenses", url: "/expenses", icon: Wallet },
   { title: "Queries", url: "/queries", icon: MessageSquare },
   { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
   { title: "FAQ Management", url: "/faq", icon: HelpCircle },
