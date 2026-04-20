@@ -102,9 +102,13 @@ const sections: MenuSection[] = [
 ];
 
 export function AppSidebar() {
-  const { state, toggleSidebar } = useSidebar();
+  const { state, toggleSidebar, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+
+  const handleNavClick = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -136,6 +140,7 @@ export function AppSidebar() {
                         <NavLink
                           to={item.url}
                           end
+                          onClick={handleNavClick}
                           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sidebar-foreground/80 hover:bg-sidebar-accent transition-colors"
                           activeClassName="bg-sidebar-primary text-sidebar-primary-foreground font-medium hover:bg-sidebar-primary"
                         >
