@@ -18,6 +18,7 @@ import {
   Contact2,
   ClipboardCheck,
   BadgeIndianRupee,
+  ListTodo,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -48,6 +49,7 @@ const menuItems = [
   { title: "Employees", url: "/employees", icon: Contact2 },
   { title: "Attendance", url: "/attendance", icon: ClipboardCheck },
   { title: "Payroll", url: "/payroll", icon: BadgeIndianRupee },
+  { title: "Tasks", url: "/tasks", icon: ListTodo },
   { title: "Queries", url: "/queries", icon: MessageSquare },
   { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
   { title: "FAQ Management", url: "/faq", icon: HelpCircle },
