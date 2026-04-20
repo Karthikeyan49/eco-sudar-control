@@ -20,6 +20,7 @@ import {
   BadgeIndianRupee,
   ListTodo,
   CalendarClock,
+  BookOpen,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -52,6 +53,7 @@ const menuItems = [
   { title: "Payroll", url: "/payroll", icon: BadgeIndianRupee },
   { title: "Tasks", url: "/tasks", icon: ListTodo },
   { title: "Meetings", url: "/meetings", icon: CalendarClock },
+  { title: "SOPs", url: "/sops", icon: BookOpen },
   { title: "Queries", url: "/queries", icon: MessageSquare },
   { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
   { title: "FAQ Management", url: "/faq", icon: HelpCircle },
