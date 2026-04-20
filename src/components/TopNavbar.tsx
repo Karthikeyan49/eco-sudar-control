@@ -42,11 +42,11 @@ export function TopNavbar() {
   };
 
   return (
-    <header className="h-16 border-b bg-card flex items-center justify-between px-6 shrink-0">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="lg:hidden" />
+    <header className="h-16 border-b bg-card flex items-center justify-between px-3 md:px-6 shrink-0 gap-2">
+      <div className="flex items-center gap-2 md:gap-4 min-w-0">
+        <SidebarTrigger className="lg:hidden shrink-0" />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4 shrink-0">
         <Popover>
           <PopoverTrigger asChild>
             <button className="relative p-2 rounded-lg hover:bg-muted transition-colors">
