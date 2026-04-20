@@ -22,7 +22,7 @@ import {
   SOP_STATUS_COLOR,
   SopStatus,
 } from "@/lib/api/sops";
-import { hrApi, Employee } from "@/lib/api/hr";
+import { employeesApi, Employee } from "@/lib/api/hr";
 
 const formatBytes = (b: number) => (b < 1024 ? `${b} B` : b < 1_048_576 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1_048_576).toFixed(2)} MB`);
 const formatDate = (iso: string) => new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
@@ -41,7 +41,7 @@ export default function Sops() {
 
   const reload = async () => {
     setLoading(true);
-    const [s, e] = await Promise.all([sopsApi.list(), hrApi.listEmployees()]);
+    const [s, e] = await Promise.all([sopsApi.list(), employeesApi.list()]);
     setSops(s); setEmployees(e); setLoading(false);
   };
   useEffect(() => { reload(); }, []);
@@ -98,10 +98,10 @@ export default function Sops() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total SOPs" value={stats.total.toString()} icon={FileText} />
-        <StatCard title="Approved" value={stats.approved.toString()} icon={CheckCircle2} />
-        <StatCard title="Pending Approval" value={stats.pending.toString()} icon={History} />
-        <StatCard title="Drafts" value={stats.drafts.toString()} icon={Shield} />
+        <StatCard title="Total SOPs" value={stats.total.toString()} subtitle="Across all departments" icon={FileText} />
+        <StatCard title="Approved" value={stats.approved.toString()} subtitle="Live & in use" icon={CheckCircle2} />
+        <StatCard title="Pending Approval" value={stats.pending.toString()} subtitle="Awaiting sign-off" icon={History} />
+        <StatCard title="Drafts" value={stats.drafts.toString()} subtitle="Work in progress" icon={Shield} />
       </div>
 
       <Card className="p-4">
