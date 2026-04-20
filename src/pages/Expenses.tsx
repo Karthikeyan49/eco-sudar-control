@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Pencil, Trash2, Upload, Wallet, Receipt, TrendingUp, Layers } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Plus, Search, Pencil, Trash2, Upload, Wallet, Receipt, TrendingUp, Layers, Camera, ImageIcon, Sparkles, Loader2, X } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,17 +16,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { StatCard } from "@/components/StatCard";
 import { toast } from "sonner";
 import {
-  EXPENSE_CATEGORIES, expensesApi, type Expense, type ExpenseCategory,
+  EXPENSE_CATEGORIES, expensesApi, type Expense,
 } from "@/lib/api/expenses";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from "recharts";
 
 const PAYMENT_MODES: Expense["paymentMode"][] = ["Cash", "Bank Transfer", "UPI", "Cheque", "Card"];
+const OTHER = "Other" as const;
 
 const expenseSchema = z.object({
   date: z.string().min(1, "Date is required"),
-  category: z.enum(EXPENSE_CATEGORIES as unknown as [string, ...string[]]),
+  category: z.string().trim().min(2, "Category required").max(60),
   vendor: z.string().trim().min(2, "Vendor required").max(120),
   description: z.string().trim().max(300).optional().default(""),
   amount: z.number().positive("Amount must be > 0").max(10_000_000),
@@ -44,7 +45,8 @@ const CHART_COLORS = [
 
 interface FormState {
   date: string;
-  category: ExpenseCategory;
+  category: string;          // any string (preset OR custom from "Other")
+  categoryChoice: string;    // dropdown value: a preset OR "Other"
   vendor: string;
   description: string;
   amount: string;
@@ -55,6 +57,7 @@ interface FormState {
 const emptyForm = (): FormState => ({
   date: new Date().toISOString().slice(0, 10),
   category: "Office Stationery",
+  categoryChoice: "Office Stationery",
   vendor: "",
   description: "",
   amount: "",
