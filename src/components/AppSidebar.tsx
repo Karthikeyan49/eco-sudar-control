@@ -13,6 +13,8 @@ import {
   Calculator,
   Wallet,
   LineChart,
+  Receipt,
+  FileBarChart2,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -38,6 +40,8 @@ const menuItems = [
   { title: "Invoices", url: "/invoices", icon: FileText },
   { title: "Expenses", url: "/expenses", icon: Wallet },
   { title: "Profit & Loss", url: "/finance", icon: LineChart },
+  { title: "GST Invoicing", url: "/gst-invoicing", icon: Receipt },
+  { title: "Reports", url: "/reports", icon: FileBarChart2 },
   { title: "Queries", url: "/queries", icon: MessageSquare },
   { title: "Quote Requests", url: "/quote-requests", icon: Calculator },
   { title: "FAQ Management", url: "/faq", icon: HelpCircle },
