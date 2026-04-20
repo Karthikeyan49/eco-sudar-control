@@ -13,6 +13,8 @@ import Dealers from "./pages/Dealers";
 import Invoices from "./pages/Invoices";
 import Expenses from "./pages/Expenses";
 import Finance from "./pages/Finance";
+import GstInvoicing from "./pages/GstInvoicing";
+import Reports from "./pages/Reports";
 import SettingsPage from "./pages/Settings";
 import Queries from "./pages/Queries";
 import FAQPage from "./pages/FAQ";
@@ -40,6 +42,8 @@ function ProtectedRoutes() {
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/expenses" element={<Expenses />} />
         <Route path="/finance" element={<Finance />} />
+        <Route path="/gst-invoicing" element={<GstInvoicing />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="/queries" element={<Queries />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/quote-requests" element={<QuoteRequests />} />
